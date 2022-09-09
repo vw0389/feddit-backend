@@ -1,4 +1,4 @@
-package com.vweinert.fedditbackend.api.health;
+package com.vweinert.fedditbackend.controller.customHealths;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
