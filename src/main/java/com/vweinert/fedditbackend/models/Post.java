@@ -10,36 +10,27 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import lombok.Data;
 
 @Entity
-@Table(name="users")
+@Table(name="post")
 @Data
-public class User {
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(nullable=false,updatable = false,unique = true)
-    private String username;
-    @Column(nullable=false)
-    private String password;
-    @Column(columnDefinition = "text")
-    private String about;
+    @Column(nullable=false,updatable = false)
+    private String title;
+    @Column(nullable=false,columnDefinition = "text")
+    private String content;
     @Column(nullable=false,updatable = false)
     private LocalDateTime createdAt;
     @Column(nullable=false)
-    private LocalDateTime passwordChangedAt;
-    @Column(nullable=false)
-    private LocalDateTime aboutChangedAt;
-    
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id",nullable=false)
-    private Set<Post> posts;
-    
+    private LocalDateTime modifiedAt;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id",nullable=false)
     private Set<Comment> comments;
