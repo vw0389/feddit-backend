@@ -11,13 +11,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name="post")
 @Data
+@NoArgsConstructor
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,11 +32,12 @@ public class Post {
     @Column(nullable=false,columnDefinition = "text")
     private String content;
     @Column(nullable=false,updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
     @Column(nullable=false)
+    @CreationTimestamp
     private LocalDateTime modifiedAt;
-
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "comment_id",nullable=false)
+    @JoinColumn(name = "post_id",nullable=false)
     private Set<Comment> comments;
 }

@@ -1,11 +1,9 @@
-FROM adoptopenjdk/openjdk11:alpine AS build
+FROM maven:3.8.6-jdk-11 AS build
 
 WORKDIR /backend
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline
+COPY pom.xml ./
 COPY src ./src
-RUN ./mvnw verify --fail-never 
+RUN --mount=type=cache,target=/root/.m2 mvn clean package
 
 FROM adoptopenjdk/openjdk11:alpine
 

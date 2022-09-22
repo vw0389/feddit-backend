@@ -5,10 +5,20 @@ import java.time.LocalDateTime;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
+@Table(name="comment")
+@Data
+@NoArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,7 +26,9 @@ public class Comment {
     @Column(nullable=false,columnDefinition = "text")
     private String content;
     @Column(nullable=false,updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
     @Column(nullable=false)
+    @CreationTimestamp
     private LocalDateTime modifiedAt;
 }
