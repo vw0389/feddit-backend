@@ -1,7 +1,7 @@
 package com.vweinert.fedditbackend.models;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,12 +15,15 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="post")
+@Table(name="posts")
 @Data
 @NoArgsConstructor
 public class Post {
@@ -37,7 +40,15 @@ public class Post {
     @Column(nullable=false)
     @CreationTimestamp
     private LocalDateTime modifiedAt;
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id",nullable=false)
-    private Set<Comment> comments;
+    @ManyToMany
+    @JoinTable(
+        name = "posts_comments",
+        joinColumns = @JoinColumn(name = "post_id"),
+        inverseJoinColumns = @JoinColumn(name = "comment_id")
+    )
+    private List<Comment> comments;
+    @ManyToOne
+    @JoinColumn(name="user_id", referencedColumnName = "id")
+    private User user;
+
 }

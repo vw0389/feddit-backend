@@ -1,6 +1,7 @@
 package com.vweinert.fedditbackend.models;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -51,13 +52,11 @@ public class User {
 				inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
     
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id",nullable=false)
-    private Set<Post> posts;
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    private List<Post> posts;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id",nullable=false)
-    private Set<Comment> comments;
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    private List<Comment> comments;
 
     public User(String username, String email, String password){
         this.username = username;
