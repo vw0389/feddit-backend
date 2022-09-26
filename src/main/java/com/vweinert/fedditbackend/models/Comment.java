@@ -1,7 +1,6 @@
 package com.vweinert.fedditbackend.models;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
