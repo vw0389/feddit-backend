@@ -3,7 +3,7 @@ package com.vweinert.fedditbackend.payload.response;
 import com.vweinert.fedditbackend.models.Comment;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 
 
@@ -24,12 +24,20 @@ public class PostResponse {
 
     private LocalDateTime modifiedAt;
 
-    private Set<Comment> comments;
+    private List<Comment> comments;
 
     public PostResponse(Long id, String title, String content, LocalDateTime createdAt){
         this.id = id;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
+    }
+    public PostResponse(Long id, String title, String content, LocalDateTime createdAt,LocalDateTime modifiedAt,List<Comment> comments){
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
+        this.comments = comments;
     }
 }

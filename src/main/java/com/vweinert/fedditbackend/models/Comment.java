@@ -1,16 +1,15 @@
 package com.vweinert.fedditbackend.models;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
+
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -39,9 +38,10 @@ public class Comment {
     @CreationTimestamp
     private LocalDateTime modifiedAt;
 
-    @ManyToMany(mappedBy = "comments")
-    private List<Post> post;
-    @ManyToOne(optional = false,cascade = CascadeType.PERSIST)
-    @JoinColumn(name="user_id")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name="post_id", referencedColumnName = "id")
+    private Post post;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name="user_id", referencedColumnName = "id")
     private User user;
 }

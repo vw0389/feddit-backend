@@ -1,10 +1,8 @@
 package com.vweinert.fedditbackend.models;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -41,11 +39,10 @@ public class User {
     @Column(nullable=false,updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
-    
     private LocalDateTime passwordChangedAt;
-
     private LocalDateTime aboutChangedAt;
-    
+
+    private Boolean deleted;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(	name = "user_roles", 
 				joinColumns = @JoinColumn(name = "user_id"), 
@@ -53,10 +50,10 @@ public class User {
     private Set<Role> roles;
     
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
-    private List<Post> posts;
+    private Set<Post> posts;
 
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
-    private List<Comment> comments;
+    private Set<Comment> comments;
 
     public User(String username, String email, String password){
         this.username = username;

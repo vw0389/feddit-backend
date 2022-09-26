@@ -1,5 +1,6 @@
 package com.vweinert.fedditbackend.controllers;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -9,8 +10,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,10 +37,9 @@ public class PostController {
     UserRepository userRepo;
     @Autowired
     JwtUtils jwtUtils;
-    @PostMapping("/new")
+    @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> postPost(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @Valid @RequestBody PostRequest postRequest) {
-        Post post = new Post();
         if (postRequest.getTitle().isEmpty()){
             return ResponseEntity.badRequest().body("Title is empty");
         }
@@ -44,10 +47,15 @@ public class PostController {
         if (postRequest.getContent().isEmpty()){
             return ResponseEntity.badRequest().body("Content is empty");
         }
-        String username = jwtUtils.getUserNameFromJwtToken(authorization);
+        String jwt = authorization.split(" ")[1];
+        String username = jwtUtils.getUserNameFromJwtToken(jwt);
         User user = userRepo.findByUsername(username).orElseThrow(() -> {
             return new RuntimeException();
         });
+        if (user.getDeleted()){
+            return ResponseEntity.badRequest().body("user is deleted");
+        }
+        Post post = new Post();
         post.setUser(user);
 
         post.setTitle(postRequest.getTitle());
@@ -56,4 +64,93 @@ public class PostController {
         PostResponse response = new PostResponse(saved.getId(),saved.getTitle(),saved.getContent(),saved.getCreatedAt());
         return ResponseEntity.ok().body(response);
     }
+    @GetMapping("/{postid}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> getPostById(@PathVariable String postid) {
+        Long id;
+        try {
+            id = Long.parseLong(postid);
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("cannot parse id");
+        }
+        
+        Optional<Post> post = postRepo.findById(id);
+        if(post.isPresent()){
+            PostResponse response = new PostResponse();
+            response.setId(post.get().getId());
+            response.setTitle(post.get().getTitle());
+            response.setContent(post.get().getContent());
+            response.setComments(post.get().getComments());
+            response.setCreatedAt(post.get().getCreatedAt());
+            response.setModifiedAt(post.get().getModifiedAt());
+            return ResponseEntity.ok().body(response);
+        } else {
+            return ResponseEntity.badRequest().body("id does not correspond to a post");
+        }
+        
+    }
+    @PutMapping("/{postid}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> putPostById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @Valid @RequestBody PostRequest postRequest, @PathVariable String postid) {
+        Long id;
+        try {
+            id = Long.parseLong(postid);
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("cannot parse id");
+        }
+        String jwt = authorization.split(" ")[1];
+        String username = jwtUtils.getUserNameFromJwtToken(jwt);
+        User user = userRepo.findByUsername(username).orElseThrow(() -> {
+            return new RuntimeException("user not found");
+        });
+        Optional<Post> post = postRepo.findById(id);
+
+        if(post.isPresent()){
+            if (user.equals(post.get().getUser())) {
+                return ResponseEntity.badRequest().body("tried to put on another person's post");
+            } else{
+                post.get().setContent(postRequest.getContent());
+                post.get().setModifiedAt(LocalDateTime.now());
+                Post saved = postRepo.save(post.get());
+                PostResponse response = new PostResponse();
+                response.setId(saved.getId());
+                response.setTitle(saved.getTitle());
+                response.setContent(saved.getContent());
+                response.setCreatedAt(saved.getCreatedAt());
+                response.setModifiedAt(saved.getModifiedAt());
+                response.setComments(saved.getComments());
+                return ResponseEntity.ok().body(response);
+            }
+        } else {
+            return ResponseEntity.badRequest().body("id does not correspond to a post");
+        }
+    
+    }
+    @DeleteMapping("/{postid}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> deletePostById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @PathVariable String postid) {
+        Long id;
+        try {
+            id = Long.parseLong(postid);
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("cannot parse id");
+        }
+        String jwt = authorization.split(" ")[1];
+        String username = jwtUtils.getUserNameFromJwtToken(jwt);
+        User user = userRepo.findByUsername(username).orElseThrow(() -> {
+            return new RuntimeException("user not found");
+        });
+        Optional<Post> post = postRepo.findById(id);
+        if (post.isPresent()){
+            if (!post.get().getUser().equals(user)) {
+                return ResponseEntity.badRequest().body("tried to delete another person's post");
+            } else {
+                postRepo.deleteById(post.get().getId());
+                return ResponseEntity.ok().body("post deleted");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("post does not exist");
+        }
+    }
+    
 }

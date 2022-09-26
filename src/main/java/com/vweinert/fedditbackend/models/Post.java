@@ -3,10 +3,8 @@ package com.vweinert.fedditbackend.models;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,9 +13,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,15 +34,8 @@ public class Post {
     @Column(nullable=false,updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
-    @Column(nullable=false)
-    @CreationTimestamp
     private LocalDateTime modifiedAt;
-    @ManyToMany
-    @JoinTable(
-        name = "posts_comments",
-        joinColumns = @JoinColumn(name = "post_id"),
-        inverseJoinColumns = @JoinColumn(name = "comment_id")
-    )
+    @OneToMany(mappedBy = "post")
     private List<Comment> comments;
     @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName = "id")
