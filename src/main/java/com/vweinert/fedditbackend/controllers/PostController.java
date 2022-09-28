@@ -1,7 +1,10 @@
 package com.vweinert.fedditbackend.controllers;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vweinert.fedditbackend.models.Comment;
 import com.vweinert.fedditbackend.models.Post;
 import com.vweinert.fedditbackend.models.User;
 import com.vweinert.fedditbackend.payload.request.PostRequest;
@@ -27,6 +31,7 @@ import com.vweinert.fedditbackend.payload.response.PostResponse;
 import com.vweinert.fedditbackend.repository.PostRepository;
 import com.vweinert.fedditbackend.repository.UserRepository;
 import com.vweinert.fedditbackend.security.jwt.JwtUtils;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/post")
@@ -76,13 +81,19 @@ public class PostController {
         
         Optional<Post> post = postRepo.findById(id);
         if(post.isPresent()){
+            User userResponse = new User();
+            userResponse.setDeleted(null);
+            userResponse.setId(post.get().getId());
+            userResponse.setUsername(post.get().getUser().getUsername());
             PostResponse response = new PostResponse();
+            response.setUser(userResponse);
             response.setId(post.get().getId());
             response.setTitle(post.get().getTitle());
             response.setContent(post.get().getContent());
-            response.setComments(post.get().getComments());
+            
             response.setCreatedAt(post.get().getCreatedAt());
             response.setModifiedAt(post.get().getModifiedAt());
+            response.setComments(post.get().getComments());
             return ResponseEntity.ok().body(response);
         } else {
             return ResponseEntity.badRequest().body("id does not correspond to a post");
@@ -152,5 +163,6 @@ public class PostController {
             return ResponseEntity.badRequest().body("post does not exist");
         }
     }
+    
     
 }

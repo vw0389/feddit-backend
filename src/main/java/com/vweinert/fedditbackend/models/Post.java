@@ -12,6 +12,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -35,8 +38,10 @@ public class Post {
     @CreationTimestamp
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    @JsonManagedReference
     @OneToMany(mappedBy = "post")
     private List<Comment> comments;
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName = "id")
     private User user;

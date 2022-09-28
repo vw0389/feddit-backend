@@ -17,6 +17,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -41,17 +43,17 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime passwordChangedAt;
     private LocalDateTime aboutChangedAt;
-
-    private Boolean deleted;
+    @Column(nullable = false)
+    private Boolean deleted = false;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(	name = "user_roles", 
 				joinColumns = @JoinColumn(name = "user_id"), 
 				inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
-    
+    @JsonManagedReference
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private Set<Post> posts;
-
+    @JsonManagedReference
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private Set<Comment> comments;
 
