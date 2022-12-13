@@ -1,8 +1,8 @@
 package com.vweinert.fedditbackend.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.vweinert.fedditbackend.models.Comment;
-import com.vweinert.fedditbackend.models.User;
+import com.vweinert.fedditbackend.entities.Comment;
+import com.vweinert.fedditbackend.entities.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,18 +27,19 @@ public class PostResponse {
     private LocalDateTime modifiedAt;
     private List<Comment> comments;
     private User user;
+    // Constructor for making new posts
     public PostResponse(Long id, String title, String content, LocalDateTime createdAt){
         this.id = id;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
     }
+    // Constructor for modifying a post
     public PostResponse(Long id, String title, String content, LocalDateTime createdAt,LocalDateTime modifiedAt,List<Comment> comments){
         this.id = id;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
-        this.comments = comments;
+        this.modifiedAt = modifiedAt;  
     }
 }

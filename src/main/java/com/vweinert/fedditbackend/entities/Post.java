@@ -1,4 +1,4 @@
-package com.vweinert.fedditbackend.models;
+package com.vweinert.fedditbackend.entities;
 
 import java.time.LocalDateTime;
 import java.util.List;

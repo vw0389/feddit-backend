@@ -5,8 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.vweinert.fedditbackend.models.ERole;
-import com.vweinert.fedditbackend.models.Role;
+import com.vweinert.fedditbackend.entities.ERole;
+import com.vweinert.fedditbackend.entities.Role;
 import com.vweinert.fedditbackend.repository.RoleRepository;
 
 @SpringBootApplication
