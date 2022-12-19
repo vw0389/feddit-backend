@@ -1,6 +1,5 @@
 package com.vweinert.fedditbackend.payload.response;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.vweinert.fedditbackend.models.Comment;
 import com.vweinert.fedditbackend.models.User;
 

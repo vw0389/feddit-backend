@@ -19,7 +19,9 @@ public class FedditBackendApplication {
 	CommandLineRunner init (RoleRepository roleRepo) {
 		return args -> {
 			for(ERole role: ERole.values()) {
-				roleRepo.save(new Role(role));
+				if (!roleRepo.existsByName(role)){
+					roleRepo.save(new Role(role));
+				}	
 			}
 		};
 	}
