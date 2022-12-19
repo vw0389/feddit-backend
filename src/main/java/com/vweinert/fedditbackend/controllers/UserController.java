@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vweinert.fedditbackend.models.ERole;
-import com.vweinert.fedditbackend.models.Role;
-import com.vweinert.fedditbackend.models.User;
+import com.vweinert.fedditbackend.entities.ERole;
+import com.vweinert.fedditbackend.entities.Role;
+import com.vweinert.fedditbackend.entities.User;
 import com.vweinert.fedditbackend.payload.request.LoginRequest;
 import com.vweinert.fedditbackend.payload.request.SignupRequest;
 import com.vweinert.fedditbackend.payload.response.JwtResponse;

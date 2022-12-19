@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.vweinert.fedditbackend.models.User;
+import com.vweinert.fedditbackend.entities.User;
 import com.vweinert.fedditbackend.repository.UserRepository;
 
 @Service

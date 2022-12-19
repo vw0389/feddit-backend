@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.vweinert.fedditbackend.models.Post;
+import com.vweinert.fedditbackend.entities.Post;
 @Repository
 public interface PostRepository extends JpaRepository<Post,Long> {
     @Query(value="select * from posts order by created_at desc limit 1",nativeQuery = true)

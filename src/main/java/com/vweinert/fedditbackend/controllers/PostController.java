@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vweinert.fedditbackend.models.Comment;
-import com.vweinert.fedditbackend.models.Post;
-import com.vweinert.fedditbackend.models.User;
+import com.vweinert.fedditbackend.entities.Comment;
+import com.vweinert.fedditbackend.entities.Post;
+import com.vweinert.fedditbackend.entities.User;
 import com.vweinert.fedditbackend.payload.request.PostRequest;
 import com.vweinert.fedditbackend.payload.response.PostResponse;
 import com.vweinert.fedditbackend.repository.PostRepository;

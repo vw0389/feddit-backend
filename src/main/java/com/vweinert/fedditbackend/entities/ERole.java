@@ -1,4 +1,4 @@
-package com.vweinert.fedditbackend.models;
+package com.vweinert.fedditbackend.entities;
 
 public enum ERole {
     ROLE_USER,

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vweinert.fedditbackend.models.Post;
-import com.vweinert.fedditbackend.models.User;
+import com.vweinert.fedditbackend.entities.Post;
+import com.vweinert.fedditbackend.entities.User;
 import com.vweinert.fedditbackend.payload.response.PostResponse;
 import com.vweinert.fedditbackend.repository.PostRepository;
 @CrossOrigin(origins = "*", maxAge = 3600)
