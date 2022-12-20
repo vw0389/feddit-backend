@@ -1,6 +1,9 @@
 package com.vweinert.fedditbackend.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +22,7 @@ import com.vweinert.fedditbackend.repository.PostRepository;
 public class HomeController {
     @Autowired
     PostRepository postRepo;
-    @GetMapping
+    @GetMapping("/mostRecent")
     public ResponseEntity<?> getMostRecent() {
         
         Optional<Post> post = postRepo.findMostRecent();
@@ -36,6 +39,33 @@ public class HomeController {
             response.setComments(post.get().getComments());
             
             return ResponseEntity.ok().body(response);
+        } else {
+            return ResponseEntity.badRequest().body("No posts are in the db");
+        }
+        
+    }
+    @GetMapping("/TenMostRecent")
+    public ResponseEntity<?> getTenMostRecent() {
+        
+        Set<Post> posts = postRepo.findTenMostRecent();
+        if (!posts.isEmpty()) {
+            List<PostResponse> postsInResposneFormat = new ArrayList<>();
+            for(Post post: posts) {
+                PostResponse response = new PostResponse();
+                User userResponse = new User();
+                userResponse.setDeleted(null);
+                userResponse.setId(post.getUser().getId());
+                userResponse.setUsername(post.getUser().getUsername());
+                response.setId(post.getId());
+                response.setUser(userResponse);
+                response.setContent(post.getContent());
+                response.setTitle(post.getTitle());
+                response.setComments(post.getComments());
+                postsInResposneFormat.add(response);
+            }
+            
+            
+            return ResponseEntity.ok().body(postsInResposneFormat);
         } else {
             return ResponseEntity.badRequest().body("No posts are in the db");
         }
