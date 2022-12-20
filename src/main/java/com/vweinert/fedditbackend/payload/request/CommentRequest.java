@@ -1,14 +1,12 @@
+/* (C)2022 */
 package com.vweinert.fedditbackend.payload.request;
 
 import javax.validation.constraints.NotBlank;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-
 public class CommentRequest {
-    @NotBlank
-    String content;
+    @NotBlank String content;
 }
