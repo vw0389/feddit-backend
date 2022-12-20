@@ -8,6 +8,9 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,27 +21,30 @@ import org.springframework.stereotype.Component;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${feddit.app.jwtSecret}")
-    private String jwtSecret;
+    // @Value("${feddit.app.jwtSecret}")
+    // private String jwtSecret;
 
-    private JwtParser parser = Jwts.parserBuilder().setSigningKey().build();
+    private Map<String, Object> rsaKeys;
+    private JwtParser parser;
 
     @Value("${feddit.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
-    private static void setupRSA(String secret) {
-
+    public JwtUtils() throws Exception{
+        this.rsaKeys =  getRsaKeys();
+        PublicKey publicKey = (PublicKey) rsaKeys.get("public");
+        this.parser = Jwts.parserBuilder().setSigningKey(publicKey).build();
     }
     public String generateJwtToken(Authentication authentication) {
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-
+        PrivateKey privateKey = (PrivateKey) rsaKeys.get("private");
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.RS512, )
-                // .compact();
+                .signWith(privateKey,SignatureAlgorithm.RS512)
+                .compact();
     }
 
     public String getUserNameFromJwtToken(String token) {
@@ -62,5 +68,17 @@ public class JwtUtils {
         }
 
         return false;
+    }
+
+    private Map<String,Object> getRsaKeys() throws Exception {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(4096);
+        KeyPair keyPair = keyPairGenerator.genKeyPair();
+        PrivateKey privateKey = keyPair.getPrivate();
+        PublicKey publicKey = keyPair.getPublic();
+        Map<String, Object> keys = new HashMap<String, Object>();
+        keys.put("private", privateKey);
+        keys.put("public",publicKey);
+        return keys;
     }
 }
