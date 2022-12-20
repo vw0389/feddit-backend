@@ -47,7 +47,7 @@ public class HomeController {
     @GetMapping("/TenMostRecent")
     public ResponseEntity<?> getTenMostRecent() {
         
-        Set<Post> posts = postRepo.findTenMostRecent();
+        List<Post> posts = postRepo.findTenMostRecent();
         if (!posts.isEmpty()) {
             List<PostResponse> postsInResposneFormat = new ArrayList<>();
             for(Post post: posts) {
