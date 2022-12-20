@@ -1,6 +1,15 @@
+/* (C)2022 */
 package com.vweinert.fedditbackend.security.jwt;
-
+// https://stackoverflow.com/questions/37722090/java-jwt-with-public-private-keys
+import com.vweinert.fedditbackend.security.services.UserDetailsImpl;
+import io.jsonwebtoken.*;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,51 +17,68 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import com.vweinert.fedditbackend.security.services.UserDetailsImpl;
-import io.jsonwebtoken.*;
-
 @Component
 public class JwtUtils {
-  private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-  @Value("${feddit.app.jwtSecret}")
-  private String jwtSecret;
+    // @Value("${feddit.app.jwtSecret}")
+    // private String jwtSecret;
 
-  @Value("${feddit.app.jwtExpirationMs}")
-  private int jwtExpirationMs;
+    private Map<String, Object> rsaKeys;
+    private JwtParser parser;
 
-  public String generateJwtToken(Authentication authentication) {
+    @Value("${feddit.app.jwtExpirationMs}")
+    private int jwtExpirationMs;
 
-    UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+    public JwtUtils() throws Exception{
+        this.rsaKeys =  getRsaKeys();
+        PublicKey publicKey = (PublicKey) rsaKeys.get("public");
+        this.parser = Jwts.parserBuilder().setSigningKey(publicKey).build();
+    }
+    public String generateJwtToken(Authentication authentication) {
 
-    return Jwts.builder()
-        .setSubject((userPrincipal.getUsername()))
-        .setIssuedAt(new Date())
-        .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-        .signWith(SignatureAlgorithm.HS512, jwtSecret)
-        .compact();
-  }
-
-  public String getUserNameFromJwtToken(String token) {
-    return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
-  }
-
-  public boolean validateJwtToken(String authToken) {
-    try {
-      Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-      return true;
-    } catch (SignatureException e) {
-      logger.error("Invalid JWT signature: {}", e.getMessage());
-    } catch (MalformedJwtException e) {
-      logger.error("Invalid JWT token: {}", e.getMessage());
-    } catch (ExpiredJwtException e) {
-      logger.error("JWT token is expired: {}", e.getMessage());
-    } catch (UnsupportedJwtException e) {
-      logger.error("JWT token is unsupported: {}", e.getMessage());
-    } catch (IllegalArgumentException e) {
-      logger.error("JWT claims string is empty: {}", e.getMessage());
+        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+        PrivateKey privateKey = (PrivateKey) rsaKeys.get("private");
+        return Jwts.builder()
+                .setSubject((userPrincipal.getUsername()))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(privateKey,SignatureAlgorithm.RS512)
+                .compact();
     }
 
-    return false;
-  }
+    public String getUserNameFromJwtToken(String token) {
+        return parser.parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public boolean validateJwtToken(String authToken) {
+        try {
+            parser.parseClaimsJws(authToken);
+            return true;
+        } catch (SecurityException e) {
+            logger.error("Invalid JWT signature: {}", e.getMessage());
+        } catch (MalformedJwtException e) {
+            logger.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            logger.error("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            logger.error("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims string is empty: {}", e.getMessage());
+        }
+
+        return false;
+    }
+
+    private Map<String,Object> getRsaKeys() throws Exception {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(4096);
+        KeyPair keyPair = keyPairGenerator.genKeyPair();
+        PrivateKey privateKey = keyPair.getPrivate();
+        PublicKey publicKey = keyPair.getPublic();
+        Map<String, Object> keys = new HashMap<String, Object>();
+        keys.put("private", privateKey);
+        keys.put("public",publicKey);
+        return keys;
+    }
 }
