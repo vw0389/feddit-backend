@@ -1,6 +1,5 @@
 /* (C)2022 */
 package com.vweinert.fedditbackend.security.jwt;
-// https://stackoverflow.com/questions/37722090/java-jwt-with-public-private-keys
 import com.vweinert.fedditbackend.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import java.security.KeyPair;

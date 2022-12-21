@@ -14,3 +14,5 @@ Very much WIP
 
 ## Running
 The best way to run this is to use the feddit-compose repository's compose. all you need is docker
+
+

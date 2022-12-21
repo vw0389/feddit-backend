@@ -14,9 +14,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +26,7 @@ import javax.persistence.Entity;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,12 +37,12 @@ public class Comment {
     @CreationTimestamp
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-    @JsonBackReference
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="post_id", referencedColumnName = "id")
     private Post post;
-    @JsonBackReference
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="user_id", referencedColumnName = "id")
     private User user;
+    @Column(nullable=false)
+    private Boolean deleted = false;
 }

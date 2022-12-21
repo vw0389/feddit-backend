@@ -68,7 +68,6 @@ public class PostController {
         return ResponseEntity.ok().body(response);
     }
     @GetMapping("/{postid}")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getPostById(@PathVariable String postid) {
         Long id;
         try {
