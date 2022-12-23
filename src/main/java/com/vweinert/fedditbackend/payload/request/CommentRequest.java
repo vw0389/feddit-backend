@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class CommentRequest {
-    @NotBlank 
+    @NotBlank(message = "content of comment cannot be blank")
     String content;
 }

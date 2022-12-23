@@ -1,9 +1,12 @@
 package com.vweinert.fedditbackend.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.vweinert.fedditbackend.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.vweinert.fedditbackend.entities.Comment;
@@ -15,23 +18,34 @@ import com.vweinert.fedditbackend.service.inter.PostService;
 
 @Service
 public class PostServiceImpl implements PostService {
-
-    private final PostRepository postRepository;
-
-	public PostServiceImpl(PostRepository postRepository) {
-		super();
-		this.postRepository = postRepository;
-
-	}
-
+    @Autowired
+    private PostRepository postRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
-	public Post createPost(Post post) {
-		return postRepository.save(post);
-	}
+	public Post createPost(long userId, Post post)throws Exception {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()){
+            post.setUser(this.sanitizedUser(user.get()));
+            return postRepository.save(post);
 
+        } else {
+            throw new ResourceNotFoundException("user not found");
+        }
+
+	}
     @Override
-	public void deletePost(long postId, long userId) throws Exception {
+    public Post getPostById(long postId) throws Exception {
+        Optional<Post> result = postRepository.findById(postId);
+        if(result.isPresent() && !result.get().getDeleted()) {
+            return this.sanitizePost(result.get());
+        }else {
+            throw new ResourceNotFoundException();
+        }
+    }
+    @Override
+	public Post deletePost(long userId, long postId) throws Exception {
 		Post post = postRepository.findById(postId)
 				.orElseThrow(() -> new ResourceNotFoundException());
 		if (post.getUser().getId() != userId){
@@ -39,24 +53,17 @@ public class PostServiceImpl implements PostService {
         }
 		post.setDeleted(true);
         postRepository.save(post);
+        return this.sanitizePost(post);
 	}
 
-    @Override
-    public Post getPostById(long id) throws ResourceNotFoundException {
-		Optional<Post> result = postRepository.findById(id);
-		if(result.isPresent()) {
-			return this.sanitizePost(result.get());
-		}else {
-			throw new ResourceNotFoundException();
-		}
-	}
+
+
 
     @Override
     public Optional<Post> getMostRecentPost() {
         Optional<Post> result = postRepository.findMostRecent();
 		if(result.isPresent()) {
-            Optional<Post> sanitized = Optional.of(this.sanitizePost(result.get()));
-			return sanitized;
+            return Optional.of(this.sanitizePost(result.get()));
 		}else {
 			return result;
 		}
@@ -74,9 +81,21 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post updatePost(long postId, long userId, Post post) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    public Post updatePost(long userId, long postId, Post post) throws Exception {
+        Optional<Post> postFromRepo = postRepository.findById(postId);
+        if (postFromRepo.isPresent() && postFromRepo.get().getUser().getId() == userId && !postFromRepo.get().getDeleted()) {
+            if(postFromRepo.get().getTitle().equals(post.getTitle()) && postFromRepo.get().getContent().equals(post.getContent())) {
+                throw new Exception("Nothing changed");
+            } else {
+                postFromRepo.get().setTitle(post.getTitle());
+                postFromRepo.get().setContent(post.getContent());
+                postFromRepo.get().setModifiedAt(LocalDateTime.now());
+                Post saved = postRepository.save(postFromRepo.get());
+                return this.sanitizePost(saved);
+            }
+        } else {
+            throw new Exception("post does not belong to user or is not found or is deleted ");
+        }
     }
 
     private Post sanitizePost(Post post) {
@@ -95,7 +114,7 @@ public class PostServiceImpl implements PostService {
             comments.add(newComment);
         }
         User user = this.sanitizedUser(post.getUser());
-        Post returning = Post
+        return Post
             .builder()
             .id(post.getId())
             .title(post.getTitle())
@@ -106,7 +125,6 @@ public class PostServiceImpl implements PostService {
             .user(user)
             .comments(comments)
             .build();
-        return returning;
     }
     
     private User sanitizedUser(User user) {

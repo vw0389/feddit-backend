@@ -7,8 +7,8 @@ import com.vweinert.fedditbackend.exception.ResourceNotFoundException;
 public interface PostService {
     Optional<Post> getMostRecentPost();
     List<Post> getTenMostRecentPosts();
-    Post createPost(Post post);
-    Post updatePost(long postId, long userId, Post post) throws Exception;
-    void deletePost(long postId, long userId) throws Exception;
-	Post getPostById(long id) throws ResourceNotFoundException;
+    Post createPost(long userId, Post post) throws Exception;
+    Post updatePost(long userId, long postId, Post post) throws Exception;
+    Post deletePost(long userId, long postId) throws Exception;
+	Post getPostById(long postId) throws Exception;
 }

@@ -1,5 +1,6 @@
 /* (C)2022 */
 package com.vweinert.fedditbackend.security.jwt;
+import com.vweinert.fedditbackend.repository.UserRepository;
 import com.vweinert.fedditbackend.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import java.security.KeyPair;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -25,7 +27,8 @@ public class JwtUtils {
 
     private Map<String, Object> rsaKeys;
     private JwtParser parser;
-
+    @Autowired
+    private UserRepository userRepository;
     @Value("${feddit.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
@@ -46,10 +49,16 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(String token) {
+    public String getUserNameFromJwtToken(String authorization) {
+        String token = authorization.split(" ")[1];
         return parser.parseClaimsJws(token).getBody().getSubject();
     }
 
+    public long getUserIdFromJwtToken(String authorization) {
+        String token = authorization.split(" ")[1];
+        return userRepository.findByUsername(parser.parseClaimsJws(token).getBody().getSubject())
+                .orElseThrow(() -> new RuntimeException()).getId();
+    }
     public boolean validateJwtToken(String authToken) {
         try {
             parser.parseClaimsJws(authToken);

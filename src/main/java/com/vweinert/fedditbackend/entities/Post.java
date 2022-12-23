@@ -22,7 +22,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="posts", indexes = {@Index(name="on_created_at", columnList = "createdAt", unique = false)})
+@Table(name="posts", indexes = {@Index(name="on_created_at", columnList = "createdAt DESC")})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
