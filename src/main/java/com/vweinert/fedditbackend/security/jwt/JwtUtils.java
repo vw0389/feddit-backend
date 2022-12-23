@@ -1,6 +1,6 @@
 /* (C)2022 */
 package com.vweinert.fedditbackend.security.jwt;
-// https://stackoverflow.com/questions/37722090/java-jwt-with-public-private-keys
+import com.vweinert.fedditbackend.repository.UserRepository;
 import com.vweinert.fedditbackend.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import java.security.KeyPair;
@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,8 @@ public class JwtUtils {
 
     private Map<String, Object> rsaKeys;
     private JwtParser parser;
-
+    @Autowired
+    private UserRepository userRepository;
     @Value("${feddit.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
@@ -48,9 +50,20 @@ public class JwtUtils {
     }
 
     public String getUserNameFromJwtToken(String token) {
-        return parser.parseClaimsJws(token).getBody().getSubject();
+
+        return parser.parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
+    public long getUserIdFromJwtToken(String token) {
+
+        return userRepository.findByUsername(
+                parser.parseClaimsJws(token)
+                        .getBody()
+                        .getSubject())
+                .orElseThrow(() -> new RuntimeException()).getId();
+    }
     public boolean validateJwtToken(String authToken) {
         try {
             parser.parseClaimsJws(authToken);

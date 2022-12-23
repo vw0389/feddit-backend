@@ -9,23 +9,24 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import javax.persistence.Index;
 import org.hibernate.annotations.CreationTimestamp;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="posts")
+@Table(name="posts", indexes = {@Index(name="on_created_at", columnList = "createdAt DESC")})
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,12 +39,11 @@ public class Post {
     @CreationTimestamp
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-    @JsonManagedReference
     @OneToMany(mappedBy = "post")
     private List<Comment> comments;
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName = "id")
     private User user;
-
+    @Column(nullable=false)
+    private Boolean deleted = false;
 }

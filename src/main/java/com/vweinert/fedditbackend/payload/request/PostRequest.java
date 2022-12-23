@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class PostRequest {
-    @NotEmpty
+    @NotEmpty(message = "missing title")
     private String title;
-    @NotEmpty
+    @NotEmpty(message = "missing contents")
     private String content;
 }
