@@ -35,8 +35,8 @@ public class PostController {
     JwtUtils jwtUtils;
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> postPost(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @Valid @RequestBody Post postRequest) {
-        long userId = jwtUtils.getUserIdFromJwtToken(authorization);
+    public ResponseEntity<?> postPost(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @RequestBody Post postRequest) {
+        long userId = jwtUtils.getUserIdFromJwtToken(authorization.substring(7));
         try {
             Post post = postService.createPost(userId, postRequest);
             PostDto postDto = modelMapper.map(post,PostDto.class);
@@ -49,7 +49,6 @@ public class PostController {
     @GetMapping("/{strPostId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getPostById(@PathVariable String strPostId) {
-
         try {
             long postId = getPostId(strPostId);
             Post post = postService.getPostById(postId);
@@ -62,9 +61,9 @@ public class PostController {
     }
     @PutMapping("/{strPostId}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> putPostById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @Valid @RequestBody Post postRequest, @PathVariable String strPostId) {
+    public ResponseEntity<?> putPostById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @RequestBody Post postRequest, @PathVariable String strPostId) {
         long postId = getPostId(strPostId);
-        long userId = jwtUtils.getUserIdFromJwtToken(authorization);
+        long userId = jwtUtils.getUserIdFromJwtToken(authorization.substring(7));
         try {
             Post post = postService.updatePost(userId, postId, postRequest);
             PostDto postDto = modelMapper.map(post,PostDto.class);
@@ -77,7 +76,7 @@ public class PostController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> deletePostById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @PathVariable String strPostId) {
 
-        long userId = jwtUtils.getUserIdFromJwtToken(authorization);
+        long userId = jwtUtils.getUserIdFromJwtToken(authorization.substring(7));
         try {
             long postId = getPostId(strPostId);
             Post post = postService.deletePost(userId,postId);

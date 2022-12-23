@@ -98,7 +98,23 @@ public class PostServiceImpl implements PostService {
         }
     }
 
-    private Post sanitizePost(Post post) {
+    public boolean isPostDeleted(Post post) throws Exception{
+        if (post.getDeleted()) {
+            return true;
+        } else {
+            Optional<Post> postFromRepo = postRepository.findById(post.getId());
+            if (postFromRepo.isPresent()){
+                if (postFromRepo.get().getDeleted()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                throw new ResourceNotFoundException("unable to find post");
+            }
+        }
+    }
+    public Post sanitizePost(Post post) {
         List<Comment> comments = new ArrayList<>();
         for(Comment comment:post.getComments()) {
             User userComment = this.sanitizedUser(comment.getUser());
@@ -127,7 +143,7 @@ public class PostServiceImpl implements PostService {
             .build();
     }
     
-    private User sanitizedUser(User user) {
+    public User sanitizedUser(User user) {
         return User
             .builder()
             .id(user.getId())

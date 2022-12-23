@@ -49,14 +49,19 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(String authorization) {
-        String token = authorization.split(" ")[1];
-        return parser.parseClaimsJws(token).getBody().getSubject();
+    public String getUserNameFromJwtToken(String token) {
+
+        return parser.parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
-    public long getUserIdFromJwtToken(String authorization) {
-        String token = authorization.split(" ")[1];
-        return userRepository.findByUsername(parser.parseClaimsJws(token).getBody().getSubject())
+    public long getUserIdFromJwtToken(String token) {
+
+        return userRepository.findByUsername(
+                parser.parseClaimsJws(token)
+                        .getBody()
+                        .getSubject())
                 .orElseThrow(() -> new RuntimeException()).getId();
     }
     public boolean validateJwtToken(String authToken) {

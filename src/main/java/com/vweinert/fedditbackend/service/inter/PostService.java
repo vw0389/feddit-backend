@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.vweinert.fedditbackend.entities.Post;
-import com.vweinert.fedditbackend.exception.ResourceNotFoundException;
+
 public interface PostService {
     Optional<Post> getMostRecentPost();
     List<Post> getTenMostRecentPosts();
@@ -11,4 +11,5 @@ public interface PostService {
     Post updatePost(long userId, long postId, Post post) throws Exception;
     Post deletePost(long userId, long postId) throws Exception;
 	Post getPostById(long postId) throws Exception;
+    boolean isPostDeleted(Post post) throws Exception;
 }

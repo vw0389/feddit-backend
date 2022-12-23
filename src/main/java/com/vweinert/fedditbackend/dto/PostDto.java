@@ -22,4 +22,5 @@ public class PostDto {
     private LocalDateTime modifiedAt;
     private List<Comment> comments;
     private User user;
+    private boolean deleted;
 }
