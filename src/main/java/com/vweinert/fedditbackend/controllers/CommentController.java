@@ -26,9 +26,10 @@ import com.vweinert.fedditbackend.security.jwt.JwtUtils;
 @RestController
 @RequestMapping("/api/comment")
 public class CommentController {
-    @Autowired
     JwtUtils jwtUtils;
-
+    public CommentController( JwtUtils jwtUtils) {
+        this.jwtUtils = jwtUtils;
+    }
     @PostMapping("/{postId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> postComment(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @PathVariable String postId){

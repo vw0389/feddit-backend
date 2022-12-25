@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,10 +21,14 @@ import com.vweinert.fedditbackend.service.inter.PostService;
 @RequestMapping("/api/home")
 public class HomeController {
     String noPostsInDb = "no posts in db";
-    @Autowired
-    private PostService postService;
-    @Autowired
-	private ModelMapper modelMapper;
+
+    private final PostService postService;
+	private final ModelMapper modelMapper;
+
+    public HomeController(PostService postService, ModelMapper modelMapper) {
+        this.postService = postService;
+        this.modelMapper = modelMapper;
+    }
     @GetMapping("/mostRecent")
     public ResponseEntity<?> getMostRecent() {
         Optional<Post> post = postService.getMostRecentPost();

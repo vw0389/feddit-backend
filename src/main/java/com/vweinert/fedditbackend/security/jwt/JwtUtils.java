@@ -21,18 +21,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
-
     // @Value("${feddit.app.jwtSecret}")
     // private String jwtSecret;
-
     private Map<String, Object> rsaKeys;
     private JwtParser parser;
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     @Value("${feddit.app.jwtExpirationMs}")
     private int jwtExpirationMs;
-
-    public JwtUtils() throws Exception{
+    public JwtUtils(UserRepository userRepository) throws Exception{
+        this.userRepository = userRepository;
         this.rsaKeys =  getRsaKeys();
         PublicKey publicKey = (PublicKey) rsaKeys.get("public");
         this.parser = Jwts.parserBuilder().setSigningKey(publicKey).build();

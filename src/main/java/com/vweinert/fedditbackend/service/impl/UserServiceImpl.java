@@ -6,15 +6,17 @@ import com.vweinert.fedditbackend.payload.request.LoginRequest;
 import com.vweinert.fedditbackend.payload.response.JwtResponse;
 import com.vweinert.fedditbackend.repository.UserRepository;
 import com.vweinert.fedditbackend.service.inter.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserServiceImpl(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
     public boolean isUserDeleted(User user) throws Exception {
         if(user.getDeleted()){
             return true;

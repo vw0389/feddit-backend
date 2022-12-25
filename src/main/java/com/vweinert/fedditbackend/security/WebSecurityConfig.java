@@ -2,6 +2,7 @@ package com.vweinert.fedditbackend.security;
 
 
 
+import com.vweinert.fedditbackend.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,15 +30,17 @@ import com.vweinert.fedditbackend.security.services.UserDetailsServiceImpl;
     // jsr250Enabled = true,
     prePostEnabled = true)
 public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
-  @Autowired
-  UserDetailsServiceImpl userDetailsService;
-
-  @Autowired
-  private AuthEntryPointJwt unauthorizedHandler;
-
+  private final UserDetailsServiceImpl userDetailsService;
+  private final AuthEntryPointJwt unauthorizedHandler;
+  private final JwtUtils jwtUtils;
+  public WebSecurityConfig(JwtUtils jwtUtils, UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler) {
+    this.jwtUtils = jwtUtils;
+    this.userDetailsService = userDetailsService;
+    this.unauthorizedHandler = unauthorizedHandler;
+  }
   @Bean
   public AuthTokenFilter authenticationJwtTokenFilter() {
-    return new AuthTokenFilter();
+    return new AuthTokenFilter(jwtUtils,userDetailsService);
   }
 
 //  @Override

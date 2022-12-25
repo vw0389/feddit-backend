@@ -18,11 +18,12 @@ import com.vweinert.fedditbackend.service.inter.PostService;
 
 @Service
 public class PostServiceImpl implements PostService {
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private UserRepository userRepository;
-
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository){
+        this.postRepository = postRepository;
+        this.userRepository = userRepository;
+    }
     @Override
 	public Post createPost(long userId, Post post)throws Exception {
         Optional<User> user = userRepository.findById(userId);
@@ -98,7 +99,7 @@ public class PostServiceImpl implements PostService {
         }
     }
 
-    public boolean isPostDeleted(Post post) throws Exception{
+    public boolean isPostDeleted(Post post) throws Exception {
         if (post.getDeleted()) {
             return true;
         } else {

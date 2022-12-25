@@ -5,7 +5,6 @@ import javax.validation.Valid;
 import com.vweinert.fedditbackend.dto.PostDto;
 import com.vweinert.fedditbackend.service.inter.PostService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,12 +26,14 @@ import com.vweinert.fedditbackend.security.jwt.JwtUtils;
 @RestController
 @RequestMapping("/api/post")
 public class PostController {
-    @Autowired
-    PostService postService;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    JwtUtils jwtUtils;
+    private final PostService postService;
+    private final ModelMapper modelMapper;
+    private final JwtUtils jwtUtils;
+    public PostController(PostService postService, ModelMapper modelMapper, JwtUtils jwtUtils) {
+        this.postService = postService;
+        this.modelMapper = modelMapper;
+        this.jwtUtils = jwtUtils;
+    }
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> postPost(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @RequestBody Post postRequest) {

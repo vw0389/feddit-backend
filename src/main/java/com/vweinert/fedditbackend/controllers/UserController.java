@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,21 +35,19 @@ import com.vweinert.fedditbackend.security.services.UserDetailsImpl;
 @RestController
 @RequestMapping("/api/auth")
 public class UserController {
-  @Autowired
-  AuthenticationManager authenticationManager;
+  private final AuthenticationManager authenticationManager;
+  private final UserRepository userRepository;
+  private final RoleRepository roleRepository;
+  private final PasswordEncoder encoder;
+  private final JwtUtils jwtUtils;
 
-  @Autowired
-  UserRepository userRepository;
-
-  @Autowired
-  RoleRepository roleRepository;
-
-  @Autowired
-  PasswordEncoder encoder;
-
-  @Autowired
-  JwtUtils jwtUtils;
-
+  public UserController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder, JwtUtils jwtUtils) {
+    this.authenticationManager = authenticationManager;
+    this.userRepository = userRepository;
+    this.roleRepository = roleRepository;
+    this.encoder = encoder;
+    this.jwtUtils = jwtUtils;
+  }
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
