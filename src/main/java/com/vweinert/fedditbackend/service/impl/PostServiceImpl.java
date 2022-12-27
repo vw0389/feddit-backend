@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.vweinert.fedditbackend.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.vweinert.fedditbackend.entities.Comment;

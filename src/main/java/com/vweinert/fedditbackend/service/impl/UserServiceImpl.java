@@ -7,7 +7,6 @@ import com.vweinert.fedditbackend.exception.ResourceNotFoundException;
 import com.vweinert.fedditbackend.repository.RoleRepository;
 import com.vweinert.fedditbackend.repository.UserRepository;
 import com.vweinert.fedditbackend.security.jwt.JwtUtils;
-import com.vweinert.fedditbackend.security.services.UserDetailsImpl;
 import com.vweinert.fedditbackend.service.inter.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,10 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
+
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+
 
 @Service
 @Transactional
