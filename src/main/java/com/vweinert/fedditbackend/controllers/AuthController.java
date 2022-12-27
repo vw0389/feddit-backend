@@ -21,31 +21,33 @@ import com.vweinert.fedditbackend.payload.auth.request.SignupRequest;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-  private final UserService userService;
-  private final ModelMapper modelMapper;
-  public AuthController(UserService userService, ModelMapper modelMapper) {
-    this.userService = userService;
-    this.modelMapper = modelMapper;
-  }
-  @PostMapping("/signin")
-  public ResponseEntity<?> loginUser(@Validated(LoginRequest.class) @RequestBody User loginRequest) {
-    try {
-      User user = userService.sigInUser(loginRequest);
-      UserDto userDto = modelMapper.map(user,UserDto.class);
-      return ResponseEntity.ok(userDto);
-    } catch (Exception e ){
-      return ResponseEntity.badRequest().body(e.getMessage());
-    }
-  }
+    private final UserService userService;
+    private final ModelMapper modelMapper;
 
-  @PostMapping("/signup")
-  public ResponseEntity<?> registerUser(@Validated(SignupRequest.class) @RequestBody User signUpRequest) {
-    try {
-      User user = userService.registerUser(signUpRequest);
-      UserDto userDto = modelMapper.map(user,UserDto.class);
-      return ResponseEntity.ok(userDto);
-    } catch (Exception e ){
-      return ResponseEntity.badRequest().body(e.getMessage());
+    public AuthController(UserService userService, ModelMapper modelMapper) {
+        this.userService = userService;
+        this.modelMapper = modelMapper;
     }
-  }
+
+    @PostMapping("/signin")
+    public ResponseEntity<?> loginUser(@Validated(LoginRequest.class) @RequestBody User loginRequest) {
+        try {
+            User user = userService.sigInUser(loginRequest);
+            UserDto userDto = modelMapper.map(user, UserDto.class);
+            return ResponseEntity.ok(userDto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Validated(SignupRequest.class) @RequestBody User signUpRequest) {
+        try {
+            User user = userService.registerUser(signUpRequest);
+            UserDto userDto = modelMapper.map(user, UserDto.class);
+            return ResponseEntity.ok(userDto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
