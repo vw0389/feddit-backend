@@ -20,10 +20,10 @@ import com.vweinert.fedditbackend.payload.auth.request.SignupRequest;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
-public class UserController {
+public class AuthController {
   private final UserService userService;
   private final ModelMapper modelMapper;
-  public UserController(UserService userService, ModelMapper modelMapper) {
+  public AuthController(UserService userService, ModelMapper modelMapper) {
     this.userService = userService;
     this.modelMapper = modelMapper;
   }
