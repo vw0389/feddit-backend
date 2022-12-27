@@ -15,8 +15,10 @@ import com.vweinert.fedditbackend.entities.User;
 import com.vweinert.fedditbackend.exception.ResourceNotFoundException;
 import com.vweinert.fedditbackend.repository.PostRepository;
 import com.vweinert.fedditbackend.service.inter.PostService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;

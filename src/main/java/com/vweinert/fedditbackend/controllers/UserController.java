@@ -1,126 +1,51 @@
 package com.vweinert.fedditbackend.controllers;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
+import com.vweinert.fedditbackend.dto.UserDto;
+import com.vweinert.fedditbackend.service.inter.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vweinert.fedditbackend.entities.ERole;
-import com.vweinert.fedditbackend.entities.Role;
+
 import com.vweinert.fedditbackend.entities.User;
-import com.vweinert.fedditbackend.payload.request.LoginRequest;
-import com.vweinert.fedditbackend.payload.request.SignupRequest;
-import com.vweinert.fedditbackend.payload.response.JwtResponse;
-import com.vweinert.fedditbackend.payload.response.MessageResponse;
-import com.vweinert.fedditbackend.repository.RoleRepository;
-import com.vweinert.fedditbackend.repository.UserRepository;
-import com.vweinert.fedditbackend.security.jwt.JwtUtils;
-import com.vweinert.fedditbackend.security.services.UserDetailsImpl;
+import com.vweinert.fedditbackend.payload.auth.request.LoginRequest;
+import com.vweinert.fedditbackend.payload.auth.request.SignupRequest;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class UserController {
-  private final AuthenticationManager authenticationManager;
-  private final UserRepository userRepository;
-  private final RoleRepository roleRepository;
-  private final PasswordEncoder encoder;
-  private final JwtUtils jwtUtils;
-
-  public UserController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder, JwtUtils jwtUtils) {
-    this.authenticationManager = authenticationManager;
-    this.userRepository = userRepository;
-    this.roleRepository = roleRepository;
-    this.encoder = encoder;
-    this.jwtUtils = jwtUtils;
+  private final UserService userService;
+  private final ModelMapper modelMapper;
+  public UserController(UserService userService, ModelMapper modelMapper) {
+    this.userService = userService;
+    this.modelMapper = modelMapper;
   }
   @PostMapping("/signin")
-  public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
-    Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-    String jwt = jwtUtils.generateJwtToken(authentication);
-    
-    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();    
-    List<String> roles = userDetails.getAuthorities().stream()
-        .map(item -> item.getAuthority())
-        .collect(Collectors.toList());
-
-    return ResponseEntity.ok(new JwtResponse(jwt, 
-                         userDetails.getId(), 
-                         userDetails.getUsername(), 
-                         userDetails.getEmail(), 
-                         roles));
+  public ResponseEntity<?> loginUser(@Validated(LoginRequest.class) @RequestBody User loginRequest) {
+    try {
+      User user = userService.sigInUser(loginRequest);
+      UserDto userDto = modelMapper.map(user,UserDto.class);
+      return ResponseEntity.ok(userDto);
+    } catch (Exception e ){
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-    if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-      return ResponseEntity
-          .badRequest()
-          .body(new MessageResponse("Error: Username is already taken!"));
+  public ResponseEntity<?> registerUser(@Validated(SignupRequest.class) @RequestBody User signUpRequest) {
+    try {
+      User user = userService.registerUser(signUpRequest);
+      UserDto userDto = modelMapper.map(user,UserDto.class);
+      return ResponseEntity.ok(userDto);
+    } catch (Exception e ){
+      return ResponseEntity.badRequest().body(e.getMessage());
     }
-
-    if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-      return ResponseEntity
-          .badRequest()
-          .body(new MessageResponse("Error: Email is already in use!"));
-    }
-
-    // Create new user's account
-    User user = new User(signUpRequest.getUsername(), 
-               signUpRequest.getEmail(),
-               encoder.encode(signUpRequest.getPassword()));
-
-    Set<String> strRoles = signUpRequest.getRole();
-    Set<Role> roles = new HashSet<>();
-
-    if (strRoles == null) {
-      Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-          .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-      roles.add(userRole);
-    } else {
-      strRoles.forEach(role -> {
-        switch (role) {
-        case "admin":
-          Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-              .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-          roles.add(adminRole);
-
-          break;
-        case "mod":
-          Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-              .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-          roles.add(modRole);
-
-          break;
-        default:
-          Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-              .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-          roles.add(userRole);
-        }
-      });
-    }
-
-    user.setRoles(roles);
-    userRepository.save(user);
-
-    return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
   }
 }
