@@ -39,9 +39,9 @@ public class UserServiceImpl implements UserService {
         this.jwtUtils = jwtUtils;
         this.userRoles = new HashSet<>();
 
-        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-        userRoles.add(userRole);
+        Optional<Role> userRole = this.roleRepository.findByName(ERole.ROLE_USER);
+
+        this.userRoles.add(userRole.get());
     }
     public boolean isUserDeleted(User user) throws Exception {
         if(user.getDeleted()){
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public User sigInUser(User user) throws Exception{
+    public User sigInUser(User user) throws Exception {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
