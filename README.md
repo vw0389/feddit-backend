@@ -18,7 +18,7 @@ Very much WIP
 
 OR
 
-- At least java 11
+- At least java 17
 - Maven
 - Postgres DB with postgis extensions
 

@@ -2,14 +2,14 @@ package com.vweinert.fedditbackend.entities;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 
-import javax.persistence.ManyToOne;
+import jakarta.persistence.ManyToOne;
 
-import javax.persistence.Table;
+import jakarta.persistence.Table;
 
 import com.vweinert.fedditbackend.request.comment.PostComment;
 import com.vweinert.fedditbackend.request.comment.PutComment;
@@ -19,12 +19,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name="comments")
 @Data
