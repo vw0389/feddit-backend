@@ -1,7 +1,5 @@
 package com.vweinert.fedditbackend.controllers;
 
-import javax.validation.Valid;
-
 import com.vweinert.fedditbackend.dto.PostDto;
 import com.vweinert.fedditbackend.service.inter.PostService;
 import org.modelmapper.ModelMapper;
@@ -51,7 +49,7 @@ public class PostController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getPostById(@PathVariable String strPostId) {
         try {
-            long postId = getPostId(strPostId);
+            long postId = getId(strPostId);
             Post post = postService.getPostById(postId);
             PostDto postDto = modelMapper.map(post,PostDto.class);
             return ResponseEntity.ok().body(postDto);
@@ -63,9 +61,9 @@ public class PostController {
     @PutMapping("/{strPostId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> putPostById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @RequestBody Post postRequest, @PathVariable String strPostId) {
-        long postId = getPostId(strPostId);
         long userId = jwtUtils.getUserIdFromJwtToken(authorization.substring(7));
         try {
+            long postId = getId(strPostId);
             Post post = postService.updatePost(userId, postId, postRequest);
             PostDto postDto = modelMapper.map(post,PostDto.class);
             return ResponseEntity.ok().body(postDto);
@@ -79,7 +77,7 @@ public class PostController {
 
         long userId = jwtUtils.getUserIdFromJwtToken(authorization.substring(7));
         try {
-            long postId = getPostId(strPostId);
+            long postId = getId(strPostId);
             Post post = postService.deletePost(userId,postId);
             PostDto postDto = modelMapper.map(post,PostDto.class);
             return ResponseEntity.ok().body(postDto);
@@ -88,7 +86,7 @@ public class PostController {
         }
 
     }
-    private long getPostId(String id) {
+    private long getId(String id) {
         return Long.parseLong(id);
     }
 

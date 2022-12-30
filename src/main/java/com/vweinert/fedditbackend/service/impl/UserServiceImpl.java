@@ -8,6 +8,7 @@ import com.vweinert.fedditbackend.repository.RoleRepository;
 import com.vweinert.fedditbackend.repository.UserRepository;
 import com.vweinert.fedditbackend.security.jwt.JwtUtils;
 import com.vweinert.fedditbackend.service.inter.UserService;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,7 +39,9 @@ public class UserServiceImpl implements UserService {
         this.encoder = encoder;
         this.jwtUtils = jwtUtils;
         this.userRoles = new HashSet<>();
-
+        if (!this.roleRepository.existsByName(ERole.ROLE_USER)) {
+            this.roleRepository.save(new Role(ERole.ROLE_USER));
+        }
         Optional<Role> userRole = this.roleRepository.findByName(ERole.ROLE_USER);
 
         this.userRoles.add(userRole.get());

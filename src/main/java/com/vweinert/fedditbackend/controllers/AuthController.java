@@ -1,6 +1,6 @@
 package com.vweinert.fedditbackend.controllers;
 
-import com.vweinert.fedditbackend.dto.UserDto;
+import com.vweinert.fedditbackend.dto.AuthDto;
 import com.vweinert.fedditbackend.service.inter.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import com.vweinert.fedditbackend.entities.User;
-import com.vweinert.fedditbackend.payload.auth.request.LoginRequest;
-import com.vweinert.fedditbackend.payload.auth.request.SignupRequest;
+import com.vweinert.fedditbackend.request.auth.LoginRequest;
+import com.vweinert.fedditbackend.request.auth.SignupRequest;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -33,8 +33,8 @@ public class AuthController {
     public ResponseEntity<?> loginUser(@Validated(LoginRequest.class) @RequestBody User loginRequest) {
         try {
             User user = userService.sigInUser(loginRequest);
-            UserDto userDto = modelMapper.map(user, UserDto.class);
-            return ResponseEntity.ok(userDto);
+            AuthDto authDto = modelMapper.map(user, AuthDto.class);
+            return ResponseEntity.ok(authDto);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -44,8 +44,8 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Validated(SignupRequest.class) @RequestBody User signUpRequest) {
         try {
             User user = userService.registerUser(signUpRequest);
-            UserDto userDto = modelMapper.map(user, UserDto.class);
-            return ResponseEntity.ok(userDto);
+            AuthDto authDto = modelMapper.map(user, AuthDto.class);
+            return ResponseEntity.ok(authDto);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
