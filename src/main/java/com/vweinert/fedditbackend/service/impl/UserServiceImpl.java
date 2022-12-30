@@ -39,7 +39,9 @@ public class UserServiceImpl implements UserService {
         this.encoder = encoder;
         this.jwtUtils = jwtUtils;
         this.userRoles = new HashSet<>();
-
+        if (!this.roleRepository.existsByName(ERole.ROLE_USER)) {
+            this.roleRepository.save(new Role(ERole.ROLE_USER));
+        }
         Optional<Role> userRole = this.roleRepository.findByName(ERole.ROLE_USER);
 
         this.userRoles.add(userRole.get());
