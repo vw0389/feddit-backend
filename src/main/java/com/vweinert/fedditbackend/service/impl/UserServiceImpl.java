@@ -8,6 +8,7 @@ import com.vweinert.fedditbackend.repository.RoleRepository;
 import com.vweinert.fedditbackend.repository.UserRepository;
 import com.vweinert.fedditbackend.security.jwt.JwtUtils;
 import com.vweinert.fedditbackend.service.inter.UserService;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
