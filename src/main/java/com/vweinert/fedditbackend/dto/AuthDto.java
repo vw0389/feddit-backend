@@ -1,13 +1,14 @@
 package com.vweinert.fedditbackend.dto;
 
-import com.vweinert.fedditbackend.entities.Role;
+import java.time.LocalDateTime;
+import java.util.Set;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.Set;
+import com.vweinert.fedditbackend.entities.Role;
 
 @Data
 @Builder

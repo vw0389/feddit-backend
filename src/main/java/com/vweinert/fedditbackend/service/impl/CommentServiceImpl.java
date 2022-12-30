@@ -1,5 +1,11 @@
 package com.vweinert.fedditbackend.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.vweinert.fedditbackend.entities.Comment;
 import com.vweinert.fedditbackend.entities.Post;
 import com.vweinert.fedditbackend.entities.User;
@@ -8,11 +14,6 @@ import com.vweinert.fedditbackend.repository.CommentRepository;
 import com.vweinert.fedditbackend.repository.PostRepository;
 import com.vweinert.fedditbackend.repository.UserRepository;
 import com.vweinert.fedditbackend.service.inter.CommentService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @Transactional

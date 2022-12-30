@@ -1,14 +1,9 @@
 package com.vweinert.fedditbackend.service.impl;
 
-import com.vweinert.fedditbackend.entities.ERole;
-import com.vweinert.fedditbackend.entities.Role;
-import com.vweinert.fedditbackend.entities.User;
-import com.vweinert.fedditbackend.exception.ResourceNotFoundException;
-import com.vweinert.fedditbackend.repository.RoleRepository;
-import com.vweinert.fedditbackend.repository.UserRepository;
-import com.vweinert.fedditbackend.security.jwt.JwtUtils;
-import com.vweinert.fedditbackend.service.inter.UserService;
-import org.springframework.context.annotation.DependsOn;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,11 +12,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-
-import java.util.Optional;
-import java.util.Set;
-
+import com.vweinert.fedditbackend.entities.ERole;
+import com.vweinert.fedditbackend.entities.Role;
+import com.vweinert.fedditbackend.entities.User;
+import com.vweinert.fedditbackend.exception.ResourceNotFoundException;
+import com.vweinert.fedditbackend.repository.RoleRepository;
+import com.vweinert.fedditbackend.repository.UserRepository;
+import com.vweinert.fedditbackend.security.jwt.JwtUtils;
+import com.vweinert.fedditbackend.service.inter.UserService;
 
 @Service
 @Transactional

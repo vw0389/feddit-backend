@@ -1,4 +1,5 @@
 package com.vweinert.fedditbackend.service.inter;
+
 import com.vweinert.fedditbackend.entities.User;
 
 public interface UserService {
