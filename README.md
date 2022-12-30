@@ -28,15 +28,15 @@ The instructions are in that repository @ https://github.com/vw0389/feddit-compo
 
 Either way you'll need to set several shell variables, mostly pertaining to the postGIS database
 ### Variables
-- ${SPRING_SECURITY_USER_PASSWORD} = at least 32 character password
-- ${POSTGRES_HOST}
-- ${POSTGRES_PORT}
-- ${POSTGRES_DB}
-- ${POSTGRES_USER}
-- ${POSTGRES_PASSWORD}
+- `${SPRING_SECURITY_USER_PASSWORD}` = at least 32 character password
+- `${POSTGRES_HOST}`
+- `${POSTGRES_PORT}`
+- `${POSTGRES_DB}`
+- `${POSTGRES_USER}`
+- `${POSTGRES_PASSWORD}`
 
 ### Running
-./mvnw spring-boot:run
+`./mvnw spring-boot:run`
 ## Technologies Utilized
 * Spring
 * Spring ORM
