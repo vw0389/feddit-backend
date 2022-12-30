@@ -1,8 +1,7 @@
 package com.vweinert.fedditbackend.controllers;
 
-import com.vweinert.fedditbackend.dto.PostDto;
-import com.vweinert.fedditbackend.service.inter.PostService;
 import org.modelmapper.ModelMapper;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vweinert.fedditbackend.entities.Post;
 import com.vweinert.fedditbackend.security.jwt.JwtUtils;
+import com.vweinert.fedditbackend.dto.PostDto;
+import com.vweinert.fedditbackend.service.inter.PostService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController

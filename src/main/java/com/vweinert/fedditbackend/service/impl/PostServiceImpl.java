@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.vweinert.fedditbackend.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.vweinert.fedditbackend.entities.Comment;
 import com.vweinert.fedditbackend.entities.Post;
@@ -14,7 +14,7 @@ import com.vweinert.fedditbackend.entities.User;
 import com.vweinert.fedditbackend.exception.ResourceNotFoundException;
 import com.vweinert.fedditbackend.repository.PostRepository;
 import com.vweinert.fedditbackend.service.inter.PostService;
-import org.springframework.transaction.annotation.Transactional;
+import com.vweinert.fedditbackend.repository.UserRepository;
 
 @Service
 @Transactional

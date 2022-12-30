@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.vweinert.fedditbackend.entities.User;
 
 public class UserDetailsImpl implements UserDetails {

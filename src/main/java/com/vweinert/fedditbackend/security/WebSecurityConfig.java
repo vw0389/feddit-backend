@@ -1,9 +1,5 @@
 package com.vweinert.fedditbackend.security;
 
-
-
-import com.vweinert.fedditbackend.security.jwt.JwtUtils;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,13 +16,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.vweinert.fedditbackend.security.jwt.AuthEntryPointJwt;
 import com.vweinert.fedditbackend.security.jwt.AuthTokenFilter;
 import com.vweinert.fedditbackend.security.services.UserDetailsServiceImpl;
+import com.vweinert.fedditbackend.security.jwt.JwtUtils;
 
 @Configuration
 @EnableGlobalMethodSecurity(
-    // securedEnabled = true,
-    // jsr250Enabled = true,
     prePostEnabled = true)
-public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
   private final UserDetailsServiceImpl userDetailsService;
   private final AuthEntryPointJwt unauthorizedHandler;
   private final JwtUtils jwtUtils;
@@ -39,11 +34,6 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
   public AuthTokenFilter authenticationJwtTokenFilter() {
     return new AuthTokenFilter(jwtUtils,userDetailsService);
   }
-
-//  @Override
-//  public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-//    authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-//  }
   
   @Bean
   public DaoAuthenticationProvider authenticationProvider() {
@@ -54,12 +44,6 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
    
       return authProvider;
   }
-
-//  @Bean
-//  @Override
-//  public AuthenticationManager authenticationManagerBean() throws Exception {
-//    return super.authenticationManagerBean();
-//  }
   
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
@@ -70,18 +54,6 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
-
-//  @Override
-//  protected void configure(HttpSecurity http) throws Exception {
-//    http.cors().and().csrf().disable()
-//      .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-//      .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-//      .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-//      .antMatchers("/api/test/**").permitAll()
-//      .anyRequest().authenticated();
-//
-//    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//  }
   
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -93,13 +65,8 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
                     .requestMatchers("/api/home/**").permitAll()
                     .anyRequest().authenticated()
             );
-
-
-    
     http.authenticationProvider(authenticationProvider());
-
     http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-    
     return http.build();
   }
 }
