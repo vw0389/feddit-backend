@@ -9,8 +9,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.vweinert.fedditbackend.payload.auth.request.LoginRequest;
-import com.vweinert.fedditbackend.payload.auth.request.SignupRequest;
+import com.vweinert.fedditbackend.request.auth.LoginRequest;
+import com.vweinert.fedditbackend.request.auth.SignupRequest;
 import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.AllArgsConstructor;

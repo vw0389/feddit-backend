@@ -1,23 +1,22 @@
 package com.vweinert.fedditbackend.dto;
 
-import com.vweinert.fedditbackend.entities.Role;
+import com.vweinert.fedditbackend.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class CommentDto {
     private Long id;
-    private String username;
-    private String about;
+    private String content;
     private LocalDateTime createdAt;
-    private String jwt;
-    private Set<Role> roles;
+    private LocalDateTime modifiedAt;
+    private User user;
+    private Boolean deleted;
 }
