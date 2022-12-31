@@ -2,12 +2,12 @@ package com.vweinert.fedditbackend.dto;
 
 import java.time.LocalDateTime;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.vweinert.fedditbackend.entities.Post;
 import com.vweinert.fedditbackend.entities.User;
 
 @Data
@@ -21,4 +21,6 @@ public class CommentDto {
     private LocalDateTime modifiedAt;
     private User user;
     private Boolean deleted;
+
+    private Post post;
 }
