@@ -1,7 +1,10 @@
 package com.vweinert.fedditbackend.controllers;
 
+import com.vweinert.fedditbackend.security.jwt.AuthEntryPointJwt;
 import org.modelmapper.ModelMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,15 +24,17 @@ import com.vweinert.fedditbackend.service.inter.UserService;
 public class AuthController {
     private final UserService userService;
     private final ModelMapper modelMapper;
-
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     public AuthController(UserService userService, ModelMapper modelMapper) {
         this.userService = userService;
         this.modelMapper = modelMapper;
+        logger.debug("Auth controller initialized");
     }
 
     @PostMapping("/signin")
     public ResponseEntity<?> loginUser(@Validated(LoginRequest.class) @RequestBody User loginRequest) {
         try {
+            logger.debug("logging in user {},",loginRequest);
             User user = userService.sigInUser(loginRequest);
             AuthDto authDto = modelMapper.map(user, AuthDto.class);
             return ResponseEntity.ok(authDto);
@@ -41,6 +46,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Validated(SignupRequest.class) @RequestBody User signUpRequest) {
         try {
+            logger.debug("signing up user {},", signUpRequest);
             User user = userService.registerUser(signUpRequest);
             AuthDto authDto = modelMapper.map(user, AuthDto.class);
             return ResponseEntity.ok(authDto);

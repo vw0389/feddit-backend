@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
     private final Set<Role> userRoles;
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     public UserServiceImpl(UserRepository userRepository, AuthenticationManager authenticationManager, RoleRepository roleRepository, PasswordEncoder encoder, JwtUtils jwtUtils,Set<Role> userRoles){
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
@@ -38,11 +41,13 @@ public class UserServiceImpl implements UserService {
         this.jwtUtils = jwtUtils;
         this.userRoles = new HashSet<>();
         if (!this.roleRepository.existsByName(ERole.ROLE_USER)) {
+            logger.warn("UserServiceImpl adding user role to database");
             this.roleRepository.save(new Role(ERole.ROLE_USER));
         }
         Optional<Role> userRole = this.roleRepository.findByName(ERole.ROLE_USER);
 
         this.userRoles.add(userRole.get());
+        logger.debug("user service initialized");
     }
     public boolean isUserDeleted(User user) throws Exception {
         if(user.getDeleted()){
@@ -61,10 +66,12 @@ public class UserServiceImpl implements UserService {
     }
     public User registerUser(User user) throws Exception {
         if (userRepository.existsByUsername(user.getUsername())) {
+            logger.info("someone tried to create user on username that already exists");
             throw new Exception("username already in use");
         }
 
         if (userRepository.existsByEmail(user.getEmail())) {
+            logger.info("someone tried to create user on email that already exists");
             throw new Exception("email already in use");
         }
 
@@ -82,6 +89,7 @@ public class UserServiceImpl implements UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
         saved.setJwt(jwt);
+        logger.info("registering username {}, email {}",saved.getUsername(),saved.getEmail());
         return saved;
     }
 
@@ -94,6 +102,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalFromRepo = userRepository.findByUsername(user.getUsername());
         if (optionalFromRepo.isPresent()) {
             User fromRepo = optionalFromRepo.get();
+            logger.info("signing in  user {}",fromRepo.getUsername());
             fromRepo.setJwt(jwt);
             return fromRepo;
         } else {

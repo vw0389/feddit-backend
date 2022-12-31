@@ -2,6 +2,8 @@ package com.vweinert.fedditbackend.controllers;
 
 import org.modelmapper.ModelMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -31,17 +33,21 @@ public class CommentController {
     private final JwtUtils jwtUtils;
     private final CommentService commentService;
     private final ModelMapper modelMapper;
+    private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
     public CommentController(JwtUtils jwtUtils, CommentService commentService, ModelMapper modelMapper) {
         this.jwtUtils = jwtUtils;
         this.commentService = commentService;
         this.modelMapper = modelMapper;
+        logger.debug("comment controller initialized");
     }
     @PostMapping("/{strPostId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> postComment(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @Validated(PostComment.class) @RequestBody Comment commentRequest, @PathVariable String strPostId){
         long userId = jwtUtils.getUserIdFromJwtToken(authorization.substring(7));
+
         try {
             long postId = getId(strPostId);
+            logger.debug("user id {} comment on post id {}, comment {}",userId,strPostId,commentRequest);
             Comment comment = commentService.createComment(userId, postId, commentRequest);
             CommentDto commentDto = modelMapper.map(comment, CommentDto.class);
             return ResponseEntity.ok().body(commentDto);
@@ -55,6 +61,7 @@ public class CommentController {
     public ResponseEntity<?> getCommentById(@PathVariable String strCommentId){
         try {
             long commentId = getId(strCommentId);
+            logger.debug("getting commentId {}",commentId);
             Comment comment = commentService.getComment(commentId);
             CommentDto commentDto = modelMapper.map(comment, CommentDto.class);
             return ResponseEntity.ok().body(commentDto);
@@ -68,6 +75,7 @@ public class CommentController {
     public ResponseEntity<?> putCommentById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @Validated(PutComment.class) @RequestBody Comment commentRequest) {
         long userId = jwtUtils.getUserIdFromJwtToken(authorization.substring(7));
         try {
+            logger.debug("userId {} put commend on comment id {} body {}",userId,commentRequest.getId(),commentRequest);
             Comment comment = commentService.updateComment(userId,commentRequest);
             CommentDto commentDto = modelMapper.map(comment, CommentDto.class);
             return ResponseEntity.ok().body(commentDto);
@@ -81,6 +89,7 @@ public class CommentController {
         long userId = jwtUtils.getUserIdFromJwtToken(authorization.substring(7));
         try {
             long commentId = getId(strCommentId);
+            logger.debug("userId {} delete comment of id {}",userId,commentId);
             Comment comment = commentService.deleteComment(userId,commentId);
             CommentDto commentDto = modelMapper.map(comment, CommentDto.class);
             return ResponseEntity.ok().body(commentDto);

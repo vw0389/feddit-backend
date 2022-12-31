@@ -35,6 +35,7 @@ public class JwtUtils {
         this.rsaKeys =  getRsaKeys();
         PublicKey publicKey = (PublicKey) rsaKeys.get("public");
         this.parser = Jwts.parserBuilder().setSigningKey(publicKey).build();
+        logger.debug("jwtutils initialized");
     }
     public String generateJwtToken(Authentication authentication) {
 
@@ -61,7 +62,7 @@ public class JwtUtils {
                 parser.parseClaimsJws(token)
                         .getBody()
                         .getSubject())
-                .orElseThrow(() -> new RuntimeException()).getId();
+                .orElseThrow(RuntimeException::new).getId();
     }
     public boolean validateJwtToken(String authToken) {
         try {
