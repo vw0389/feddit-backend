@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +23,11 @@ import com.vweinert.fedditbackend.repository.UserRepository;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
     public PostServiceImpl(PostRepository postRepository, UserRepository userRepository){
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        logger.debug("post service initialized");
     }
     @Override
 	public Post createPost(long userId, Post post)throws Exception {
@@ -33,6 +37,7 @@ public class PostServiceImpl implements PostService {
             return postRepository.save(post);
 
         } else {
+            logger.error("userid {} that doesn't exist tried to post post {}",userId,post);
             throw new ResourceNotFoundException("user not found");
         }
 
@@ -43,7 +48,8 @@ public class PostServiceImpl implements PostService {
         if(result.isPresent() && !result.get().getDeleted()) {
             return this.sanitizePost(result.get());
         }else {
-            throw new ResourceNotFoundException();
+            logger.warn("tried to get postId {}, not in DB",postId);
+            throw new ResourceNotFoundException("post with that id not found");
         }
     }
     @Override
@@ -51,6 +57,7 @@ public class PostServiceImpl implements PostService {
 		Post post = postRepository.findById(postId)
 				.orElseThrow(() -> new ResourceNotFoundException());
 		if (post.getUser().getId() != userId){
+            logger.error("userid {} tried to delete another users post",userId);
             throw new Exception();
         }
 		post.setDeleted(true);
@@ -87,6 +94,7 @@ public class PostServiceImpl implements PostService {
         Optional<Post> postFromRepo = postRepository.findById(postId);
         if (postFromRepo.isPresent() && postFromRepo.get().getUser().getId() == userId && !postFromRepo.get().getDeleted()) {
             if(postFromRepo.get().getTitle().equals(post.getTitle()) && postFromRepo.get().getContent().equals(post.getContent())) {
+                logger.warn("userId {} put on post with no updates {}",userId,post);
                 throw new Exception("Nothing changed");
             } else {
                 postFromRepo.get().setTitle(post.getTitle());
@@ -96,6 +104,7 @@ public class PostServiceImpl implements PostService {
                 return this.sanitizePost(saved);
             }
         } else {
+            logger.error("userId {} tried to put on postId {}, post doesn't exist or post doesn't belong to user, or is deleted post {}",userId,postId,post);
             throw new Exception("post does not belong to user or is not found or is deleted ");
         }
     }
