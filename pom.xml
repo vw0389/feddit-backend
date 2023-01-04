@@ -137,13 +137,6 @@
 					  <style>AOSP</style>
 					  <reflowLongStrings>true</reflowLongStrings>
 					</googleJavaFormat>
-			  
-					<!-- make sure every file has the following copyright header.
-					  optionally, Spotless can set copyright years by digging
-					  through git history (see "license" section below) -->
-<!--					<licenseHeader>-->
-<!--					  <content>/* (C)$YEAR */</content>  &lt;!&ndash; or <file>${project.basedir}/license-header</file> &ndash;&gt;-->
-<!--					</licenseHeader>-->
 				  </java>
 				</configuration>
 			  </plugin>
