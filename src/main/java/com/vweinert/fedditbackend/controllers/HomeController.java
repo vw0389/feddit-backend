@@ -45,7 +45,7 @@ public class HomeController {
         }
         
     }
-    @GetMapping("/TenMostRecent")
+    @GetMapping("/tenMostRecent")
     public ResponseEntity<?> getTenMostRecent() {
         logger.debug("get ten most recent posts");
         List<Post> posts = postService.getTenMostRecentPosts();

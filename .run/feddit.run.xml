@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="feddit" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <envs>
+      <env name="POSTGRES_USER" value="root" />
+      <env name="POSTGRES_PASSWORD" value="root" />
+      <env name="POSTGRES_DB" value="feddit" />
+      <env name="POSTGRES_PORT" value="5432" />
+      <env name="POSTGRES_HOST" value="localhost" />
+      <env name="SPRING_SECURITY_USER_PASSWORD" value="zuf2rYAGdkErZSSwtGhn6qbhjC5QtmLa" />
+    </envs>
+    <module name="feddit-backend" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.vweinert.fedditbackend.FedditBackendApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
