@@ -1,11 +1,12 @@
 package com.vweinert.fedditbackend.security;
 
+import com.vweinert.fedditbackend.entities.ERole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,8 +20,7 @@ import com.vweinert.fedditbackend.security.services.UserDetailsServiceImpl;
 import com.vweinert.fedditbackend.security.jwt.JwtUtils;
 
 @Configuration
-@EnableGlobalMethodSecurity(
-    prePostEnabled = true)
+@EnableMethodSecurity
 public class WebSecurityConfig {
   private final UserDetailsServiceImpl userDetailsService;
   private final AuthEntryPointJwt unauthorizedHandler;
@@ -63,6 +63,7 @@ public class WebSecurityConfig {
             .authorizeHttpRequests((requests) -> requests
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/home/**").permitAll()
+                    .requestMatchers("/actuator/**").hasRole(ERole.ROLE_ADMIN.toString())
                     .anyRequest().authenticated()
             );
     http.authenticationProvider(authenticationProvider());
