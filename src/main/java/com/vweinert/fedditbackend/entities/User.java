@@ -75,7 +75,6 @@ public class User {
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private Set<Comment> comments;
     @Transient
-    @JsonInclude()
     private String jwt;
     public User(String username, String email, String password){
         this.username = username;
