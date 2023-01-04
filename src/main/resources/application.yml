@@ -22,7 +22,12 @@ spring:
     user:
       name: user
       password: ${SPRING_SECURITY_USER_PASSWORD}
-
 feddit:
   app:
     jwtExpirationMs: 86400000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
