@@ -2,7 +2,7 @@ package com.vweinert.fedditbackend.service.inter;
 import java.util.List;
 import java.util.Optional;
 
-import com.vweinert.fedditbackend.entities.Post;
+import com.vweinert.fedditbackend.models.Post;
 
 public interface PostService {
     Optional<Post> getMostRecentPost();

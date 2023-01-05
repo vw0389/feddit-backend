@@ -1,6 +1,5 @@
 package com.vweinert.fedditbackend.controllers;
 
-import com.vweinert.fedditbackend.security.jwt.AuthEntryPointJwt;
 import org.modelmapper.ModelMapper;
 
 import org.slf4j.Logger;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vweinert.fedditbackend.entities.User;
+import com.vweinert.fedditbackend.models.User;
 import com.vweinert.fedditbackend.request.auth.LoginRequest;
 import com.vweinert.fedditbackend.request.auth.SignupRequest;
 import com.vweinert.fedditbackend.dto.AuthDto;

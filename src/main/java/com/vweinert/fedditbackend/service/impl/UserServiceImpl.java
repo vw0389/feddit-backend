@@ -1,7 +1,6 @@
 package com.vweinert.fedditbackend.service.impl;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,10 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.vweinert.fedditbackend.entities.ERole;
-import com.vweinert.fedditbackend.entities.Role;
-import com.vweinert.fedditbackend.entities.User;
-import com.vweinert.fedditbackend.exception.ResourceNotFoundException;
+import com.vweinert.fedditbackend.models.ERole;
+import com.vweinert.fedditbackend.models.Role;
+import com.vweinert.fedditbackend.models.User;
+import com.vweinert.fedditbackend.exception.custom.ResourceNotFoundException;
 import com.vweinert.fedditbackend.repository.RoleRepository;
 import com.vweinert.fedditbackend.repository.UserRepository;
 import com.vweinert.fedditbackend.security.jwt.JwtUtils;

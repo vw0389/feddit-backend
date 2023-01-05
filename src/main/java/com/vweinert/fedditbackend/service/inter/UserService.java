@@ -1,6 +1,6 @@
 package com.vweinert.fedditbackend.service.inter;
 
-import com.vweinert.fedditbackend.entities.User;
+import com.vweinert.fedditbackend.models.User;
 
 public interface UserService {
     boolean isUserDeleted(User user) throws Exception;

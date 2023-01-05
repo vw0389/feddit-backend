@@ -1,4 +1,4 @@
-package com.vweinert.fedditbackend.entities;
+package com.vweinert.fedditbackend.models;
 
 
 import jakarta.persistence.Id;

@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.vweinert.fedditbackend.entities.Comment;
-import com.vweinert.fedditbackend.entities.Post;
-import com.vweinert.fedditbackend.entities.User;
-import com.vweinert.fedditbackend.exception.ResourceNotFoundException;
+import com.vweinert.fedditbackend.models.Comment;
+import com.vweinert.fedditbackend.models.Post;
+import com.vweinert.fedditbackend.models.User;
+import com.vweinert.fedditbackend.exception.custom.ResourceNotFoundException;
 import com.vweinert.fedditbackend.repository.PostRepository;
 import com.vweinert.fedditbackend.service.inter.PostService;
 import com.vweinert.fedditbackend.repository.UserRepository;
@@ -23,17 +23,19 @@ import com.vweinert.fedditbackend.repository.UserRepository;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final SanitizerUtils sanitizerUtils;
     private static final Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
-    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository){
+    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, SanitizerUtils sanitizerUtils){
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.sanitizerUtils = sanitizerUtils;
         logger.debug("post service initialized");
     }
     @Override
 	public Post createPost(long userId, Post post)throws Exception {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()){
-            post.setUser(this.sanitizedUser(user.get()));
+            post.setUser(sanitizerUtils.sanitizedUser(user.get()));
             return postRepository.save(post);
 
         } else {
@@ -46,7 +48,7 @@ public class PostServiceImpl implements PostService {
     public Post getPostById(long postId) throws Exception {
         Optional<Post> result = postRepository.findById(postId);
         if(result.isPresent() && !result.get().getDeleted()) {
-            return this.sanitizePost(result.get());
+            return sanitizerUtils.sanitizePost(result.get());
         }else {
             logger.warn("tried to get postId {}, not in DB",postId);
             throw new ResourceNotFoundException("post with that id not found");
@@ -62,7 +64,7 @@ public class PostServiceImpl implements PostService {
         }
 		post.setDeleted(true);
         postRepository.save(post);
-        return this.sanitizePost(post);
+        return sanitizerUtils.sanitizePost(post);
 	}
 
 
@@ -72,7 +74,7 @@ public class PostServiceImpl implements PostService {
     public Optional<Post> getMostRecentPost() {
         Optional<Post> result = postRepository.findMostRecent();
 		if(result.isPresent()) {
-            return Optional.of(this.sanitizePost(result.get()));
+            return Optional.of(sanitizerUtils.sanitizePost(result.get()));
 		}else {
 			return result;
 		}
@@ -83,7 +85,7 @@ public class PostServiceImpl implements PostService {
         List<Post> results = postRepository.findTenMostRecent();
         List<Post> returning = new ArrayList<>();
         for(Post post: results){
-            Post current = sanitizePost(post);
+            Post current = sanitizerUtils.sanitizePost(post);
             returning.add(current);
         }
         return returning;
@@ -101,7 +103,7 @@ public class PostServiceImpl implements PostService {
                 postFromRepo.get().setContent(post.getContent());
                 postFromRepo.get().setModifiedAt(LocalDateTime.now());
                 Post saved = postRepository.save(postFromRepo.get());
-                return this.sanitizePost(saved);
+                return sanitizerUtils.sanitizePost(saved);
             }
         } else {
             logger.error("userId {} tried to put on postId {}, post doesn't exist or post doesn't belong to user, or is deleted post {}",userId,postId,post);
@@ -124,42 +126,5 @@ public class PostServiceImpl implements PostService {
                 throw new ResourceNotFoundException("unable to find post");
             }
         }
-    }
-    public Post sanitizePost(Post post) {
-        List<Comment> comments = new ArrayList<>();
-        for(Comment comment:post.getComments()) {
-            User userComment = this.sanitizedUser(comment.getUser());
-            Comment newComment = Comment
-                .builder()
-                .id(comment.getId())
-                .content(comment.getContent())
-                .createdAt(comment.getCreatedAt())
-                .modifiedAt(comment.getModifiedAt())
-                .deleted(comment.getDeleted())
-                .user(userComment)
-                .build();
-            comments.add(newComment);
-        }
-        User user = this.sanitizedUser(post.getUser());
-        return Post
-            .builder()
-            .id(post.getId())
-            .title(post.getTitle())
-            .content(post.getContent())
-            .createdAt(post.getCreatedAt())
-            .modifiedAt(post.getModifiedAt())
-            .deleted(post.getDeleted())
-            .user(user)
-            .comments(comments)
-            .build();
-    }
-    
-    public User sanitizedUser(User user) {
-        return User
-            .builder()
-            .id(user.getId())
-            .username(user.getUsername())
-            .deleted(user.getDeleted())
-            .build();
     }
 }

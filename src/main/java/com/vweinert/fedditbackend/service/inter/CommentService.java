@@ -1,6 +1,6 @@
 package com.vweinert.fedditbackend.service.inter;
 
-import com.vweinert.fedditbackend.entities.Comment;
+import com.vweinert.fedditbackend.models.Comment;
 
 public interface CommentService {
     public Comment createComment(long userId, long postId, Comment commentRequest)throws Exception;

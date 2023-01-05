@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.vweinert.fedditbackend.entities.Post;
+import com.vweinert.fedditbackend.models.Post;
 
 public interface PostRepository extends JpaRepository<Post,Long> {
     @Query(value="select * from posts WHERE deleted = false order by created_at desc limit 1",nativeQuery = true)

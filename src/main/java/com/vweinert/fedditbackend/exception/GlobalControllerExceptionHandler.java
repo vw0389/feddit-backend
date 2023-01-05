@@ -1,4 +1,4 @@
-package com.vweinert.fedditbackend.controllers.exception;
+package com.vweinert.fedditbackend.exception;
 
 import com.vweinert.fedditbackend.dto.ExceptionJsonDto;
 import jakarta.servlet.http.HttpServletRequest;
