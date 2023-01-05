@@ -22,12 +22,7 @@ public class FedditBackendApplication {
 	@Bean
 	CommandLineRunner init (RoleRepository roleRepo) {
 		return args -> {
-			for(ERole role: ERole.values()) {
-				if (!roleRepo.existsByName(role)){
-					logger.warn("adding role {} to role table in DB",role);
-					roleRepo.save(new Role(role));
-				}	
-			}
+
 		};
 	}
 	@Bean
