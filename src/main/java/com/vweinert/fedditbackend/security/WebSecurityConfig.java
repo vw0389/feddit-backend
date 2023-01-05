@@ -63,7 +63,8 @@ public class WebSecurityConfig {
             .authorizeHttpRequests((requests) -> requests
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/home/**").permitAll()
-                    .requestMatchers("/actuator/**").hasRole(ERole.ROLE_ADMIN.toString())
+                    .requestMatchers("/actuator/**").permitAll()
+                    .requestMatchers("/error").permitAll()
                     .anyRequest().authenticated()
             );
     http.authenticationProvider(authenticationProvider());
