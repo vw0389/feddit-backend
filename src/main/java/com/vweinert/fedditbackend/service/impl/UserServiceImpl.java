@@ -1,11 +1,13 @@
 package com.vweinert.fedditbackend.service.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,21 +34,44 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
     private final Set<Role> userRoles;
+    private final String admin = "admin";
+    private final String adminEmail = "admin@admin.com";
+
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-    public UserServiceImpl(UserRepository userRepository, AuthenticationManager authenticationManager, RoleRepository roleRepository, PasswordEncoder encoder, JwtUtils jwtUtils,Set<Role> userRoles){
+    public UserServiceImpl(UserRepository userRepository, AuthenticationManager authenticationManager, RoleRepository roleRepository, PasswordEncoder encoder, JwtUtils jwtUtils,Set<Role> userRoles, @Value("${feddit.app.admin_password}") String adminPassword) throws ResourceNotFoundException {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
         this.jwtUtils = jwtUtils;
         this.userRoles = new HashSet<>();
-        if (!this.roleRepository.existsByName(ERole.ROLE_USER)) {
-            logger.warn("UserServiceImpl adding user role to database");
-            this.roleRepository.save(new Role(ERole.ROLE_USER));
+        for(ERole role: ERole.values()) {
+            if (!roleRepository.existsByName(role)){
+                logger.warn("adding role {} to role table in DB",role);
+                roleRepository.save(new Role(role));
+            }
         }
         Optional<Role> userRole = this.roleRepository.findByName(ERole.ROLE_USER);
-
-        this.userRoles.add(userRole.get());
+        if (userRole.isPresent()) {
+            this.userRoles.add(userRole.get());
+        } else {
+            throw new ResourceNotFoundException();
+        }
+        if (!userRepository.existsByUsername(admin)) {
+            logger.warn("adding admin user to app based upon ${FEDDIT_ADMIN_PASSWORD} env variable");
+            Set<Role> adminRole = new HashSet<>();
+            if (!roleRepository.existsByName(ERole.ROLE_ADMIN)) {
+                throw new ResourceNotFoundException();
+            }
+            adminRole.add(roleRepository.findByName(ERole.ROLE_ADMIN).get());
+            User adminUser = User.builder()
+                    .username(admin)
+                    .email(adminEmail)
+                    .password(encoder.encode(adminPassword))
+                    .roles(adminRole)
+                    .build();
+            userRepository.save(adminUser);
+        }
         logger.debug("user service initialized");
     }
     public boolean isUserDeleted(User user) throws Exception {

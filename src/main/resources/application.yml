@@ -25,7 +25,7 @@ spring:
 feddit:
   app:
     jwtExpirationMs: 86400000
-
+    admin_password: ${FEDDIT_ADMIN_PASSWORD}
 management:
   endpoints:
     web:
