@@ -1,4 +1,4 @@
-package com.vweinert.fedditbackend.exception;
+package com.vweinert.fedditbackend.exception.custom;
 
 public class CommentNotFoundException extends Exception {
     public CommentNotFoundException() {

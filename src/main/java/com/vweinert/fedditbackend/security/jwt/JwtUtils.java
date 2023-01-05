@@ -23,8 +23,6 @@ import com.vweinert.fedditbackend.security.services.UserDetailsImpl;
 @Component
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
-    // @Value("${feddit.app.jwtSecret}")
-    // private String jwtSecret;
     private Map<String, Object> rsaKeys;
     private JwtParser parser;
     private final UserRepository userRepository;

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.HttpHeaders;
 
-import com.vweinert.fedditbackend.entities.Comment;
+import com.vweinert.fedditbackend.models.Comment;
 import com.vweinert.fedditbackend.security.jwt.JwtUtils;
 import com.vweinert.fedditbackend.dto.CommentDto;
 import com.vweinert.fedditbackend.request.comment.PostComment;

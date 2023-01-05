@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.vweinert.fedditbackend.entities.Comment;
-import com.vweinert.fedditbackend.entities.Post;
-import com.vweinert.fedditbackend.entities.User;
-import com.vweinert.fedditbackend.exception.ResourceNotFoundException;
+import com.vweinert.fedditbackend.models.Comment;
+import com.vweinert.fedditbackend.models.Post;
+import com.vweinert.fedditbackend.models.User;
+import com.vweinert.fedditbackend.exception.custom.ResourceNotFoundException;
 import com.vweinert.fedditbackend.repository.CommentRepository;
 import com.vweinert.fedditbackend.repository.PostRepository;
 import com.vweinert.fedditbackend.repository.UserRepository;
@@ -23,11 +23,13 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final SanitizerUtils sanitizerUtils;
     private static final Logger logger = LoggerFactory.getLogger(CommentServiceImpl.class);
-    public CommentServiceImpl (CommentRepository commentRepository, UserRepository userRepository,PostRepository postRepository) {
+    public CommentServiceImpl (CommentRepository commentRepository, UserRepository userRepository,PostRepository postRepository, SanitizerUtils sanitizerUtils) {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.sanitizerUtils = sanitizerUtils;
         logger.debug("comment service initialized");
     }
     public Comment createComment(long userId, long postId, Comment commentRequest) throws Exception{
@@ -47,7 +49,7 @@ public class CommentServiceImpl implements CommentService {
                     .build();
             Comment saved = commentRepository.save(saving);
 
-            return sanitizeComment(saved);
+            return SanitizerUtils.sanitizeComment(saved);
         }
 
     }
@@ -57,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
             logger.warn("tried to get comment id {} that doesn't exist",commentId);
             throw new ResourceNotFoundException("tried to find comment on bad ID");
         } else {
-            return sanitizeComment(comment.get());
+            return sanitizerUtils.sanitizeComment(comment.get());
         }
     }
     public Comment updateComment(long userId,Comment commentRequest) throws Exception {
@@ -79,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
             comment.get().setModifiedAt(LocalDateTime.now());
             comment.get().setContent(commentRequest.getContent());
             Comment saved = commentRepository.save(comment.get());
-            return sanitizeComment(saved);
+            return sanitizerUtils.sanitizeComment(saved);
         }
     }
     public Comment deleteComment(long userId, long commentId) throws Exception{
@@ -97,25 +99,7 @@ public class CommentServiceImpl implements CommentService {
         } else {
             comment.get().setDeleted(true);
             Comment saved = commentRepository.save(comment.get());
-            return sanitizeComment(saved);
+            return sanitizerUtils.sanitizeComment(saved);
         }
-    }
-    public User sanitizedUser(User user) {
-        return User
-                .builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .deleted(user.getDeleted())
-                .build();
-    }
-    public Comment sanitizeComment(Comment comment) {
-        return Comment.builder()
-                .id(comment.getId())
-                .content(comment.getContent())
-                .createdAt(comment.getCreatedAt())
-                .modifiedAt(comment.getModifiedAt())
-                .deleted(comment.getDeleted())
-                .user(sanitizedUser(comment.getUser()))
-                .build();
     }
 }

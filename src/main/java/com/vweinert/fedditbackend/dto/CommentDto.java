@@ -7,8 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import com.vweinert.fedditbackend.entities.Post;
-import com.vweinert.fedditbackend.entities.User;
+import com.vweinert.fedditbackend.models.Post;
+import com.vweinert.fedditbackend.models.User;
 
 @Data
 @Builder

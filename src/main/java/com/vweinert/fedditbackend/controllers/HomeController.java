@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vweinert.fedditbackend.dto.PostDto;
-import com.vweinert.fedditbackend.entities.Post;
+import com.vweinert.fedditbackend.models.Post;
 import com.vweinert.fedditbackend.service.inter.PostService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)

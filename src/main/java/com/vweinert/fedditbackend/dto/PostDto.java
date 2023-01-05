@@ -8,8 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import com.vweinert.fedditbackend.entities.User;
-import com.vweinert.fedditbackend.entities.Comment;
+import com.vweinert.fedditbackend.models.User;
+import com.vweinert.fedditbackend.models.Comment;
 
 @Data
 @Builder
