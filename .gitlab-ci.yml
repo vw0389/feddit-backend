@@ -1,0 +1,17 @@
+image: maven:latest
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script: mvn clean package
+
+test:
+  stage: test
+  script: mvn test
+
+artifacts:
+  paths:
+    - target/*.jar
