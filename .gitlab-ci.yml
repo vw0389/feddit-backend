@@ -12,6 +12,3 @@ test:
   stage: test
   script: mvn test
 
-artifacts:
-  paths:
-    - target/*.jar
