@@ -1,5 +1,0 @@
-{"properties": [{
-  "name": "feddit.app.jwtExpirationMs",
-  "type": "java.lang.String",
-  "description": "JWT live time in minutes"
-}]}
