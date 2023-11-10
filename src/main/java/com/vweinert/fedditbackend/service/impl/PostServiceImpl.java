@@ -36,7 +36,7 @@ public class PostServiceImpl implements PostService {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()){
             post.setUser(SanitizerUtils.sanitizedUser(user.get()));
-            return postRepository.save(post);
+            return postRepository.saveAndFlush(post);
 
         } else {
             logger.error("userid {} that doesn't exist tried to post post {}",userId,post);
@@ -66,9 +66,6 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
         return SanitizerUtils.sanitizePost(post);
 	}
-
-
-
 
     @Override
     public Optional<Post> getMostRecentPost() {

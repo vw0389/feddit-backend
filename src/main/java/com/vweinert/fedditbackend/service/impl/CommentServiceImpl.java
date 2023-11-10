@@ -77,7 +77,7 @@ public class CommentServiceImpl implements CommentService {
             throw new Exception("user made no updates");
         } else {
             comment.get().setContent(commentRequest.getContent());
-            Comment saved = commentRepository.save(comment.get());
+            Comment saved = commentRepository.saveAndFlush(comment.get());
             return SanitizerUtils.sanitizeComment(saved);
         }
     }
@@ -95,7 +95,7 @@ public class CommentServiceImpl implements CommentService {
             throw new Exception("tried to delete another users comment");
         } else {
             comment.get().setDeleted(true);
-            Comment saved = commentRepository.save(comment.get());
+            Comment saved = commentRepository.saveAndFlush(comment.get());
             return SanitizerUtils.sanitizeComment(saved);
         }
     }

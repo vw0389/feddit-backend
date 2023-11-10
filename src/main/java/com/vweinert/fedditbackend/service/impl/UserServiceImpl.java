@@ -152,14 +152,14 @@ public class UserServiceImpl implements UserService {
                                 new UsernamePasswordAuthenticationToken(userFromRepo.getUsername(), user.getPassword()));
                         userFromRepo.setPassword(encoder.encode(user.getNewPassword()));
                         userFromRepo.setPasswordChangedAt(now);
-                        User saved = userRepository.save(userFromRepo);
+                        User saved = userRepository.saveAndFlush(userFromRepo);
                         Authentication authenticationAfterSave = authenticationManager.authenticate(
                                 new UsernamePasswordAuthenticationToken(userFromRepo.getUsername(), user.getNewPassword()));
                         saved.setJwt(jwtUtils.generateJwtToken(authenticationAfterSave));
                         return saved;
                     }
                 }
-                return userRepository.save(userFromRepo);
+                return userRepository.saveAndFlush(userFromRepo);
 
             }
         } else {
