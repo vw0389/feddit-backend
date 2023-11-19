@@ -17,6 +17,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -33,42 +34,45 @@ public class PostControllerTest {
     @Autowired
     private UserRepository userRepository;
     private static final String testEmail1 = "emaily@gmturtlesail.com";
-    private static final String testUsername1=  "usernameturltes";
+    private static final String testUsername1=  "admin";
     private static final String testPassword1 = "password123";
     private static final String testEmail2 = "emaily2@gmturtlesail.com";
     private static final String testUsername2=  "usernameturltes2";
     private static final String testPassword2= "password123";
 
-//    @Test
-//    public void testUserSignupAndPost() {
-//        User user = User.builder()
-//                .email(testEmail1)
-//                .username(testUsername1)
-//                .password(testPassword1)
-//                .build();
+    @Autowired
+    private MockMvc mockMvc;
+    @Test
+    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+    public void testUserSignupAndPost() {
+        User user = User.builder()
+                .email(testEmail1)
+                .username(testUsername1)
+                .password(testPassword1)
+                .build();
+
+        ResponseEntity<AuthDto> goodResponse =  (ResponseEntity<AuthDto>) authController.registerUser(user);
+
+        assertThat(goodResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        AuthDto body = goodResponse.getBody();
+
+        assertThat(body).isNotNull();
+        assertThat(body.getUsername()).isEqualTo(testUsername1);
+        assertThat(body.getId()).isNotNull();
+        assertThat(body.getJwt()).isNotEmpty();
+        assertThat(body.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
+
+        String user1Jwt = "Bearer " + body.getJwt();
+        String title = "hello world";
+        String content = "this is some post's content";
+        Post post = Post.builder()
+                .title(title)
+                .content(content)
+                .build();
+
+        ResponseEntity<PostDto> postDtoResponseEntity = (ResponseEntity<PostDto>) postController.postPost(user1Jwt,post);
 //
-//        ResponseEntity<AuthDto> goodResponse =  (ResponseEntity<AuthDto>) authController.registerUser(user);
-//
-//        assertThat(goodResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        AuthDto body = goodResponse.getBody();
-//
-//        assertThat(body).isNotNull();
-//        assertThat(body.getUsername()).isEqualTo(testUsername1);
-//        assertThat(body.getId()).isNotNull();
-//        assertThat(body.getJwt()).isNotEmpty();
-//        assertThat(body.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
-//
-//        String user1Jwt = "Bearer " + body.getJwt();
-//        String title = "hello world";
-//        String content = "this is some post's content";
-//        Post post = Post.builder()
-//                .title(title)
-//                .content(content)
-//                .build();
-//
-//        ResponseEntity<PostDto> postDtoResponseEntity = (ResponseEntity<PostDto>) postController.postPost(user1Jwt,post);
-//
-//        assertThat(postDtoResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(postDtoResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 //        PostDto postBody = postDtoResponseEntity.getBody();
 //
 //        assertThat(postBody).isNotNull();
@@ -89,7 +93,7 @@ public class PostControllerTest {
 //        }
 //
 //
-//    }
+    }
 //
 //    @Test
 //    public void testPostUpdate() {
