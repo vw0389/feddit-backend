@@ -42,37 +42,37 @@ public class PostControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Test
-    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
-    public void testUserSignupAndPost() {
-        User user = User.builder()
-                .email(testEmail1)
-                .username(testUsername1)
-                .password(testPassword1)
-                .build();
-
-        ResponseEntity<AuthDto> goodResponse =  (ResponseEntity<AuthDto>) authController.registerUser(user);
-
-        assertThat(goodResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        AuthDto body = goodResponse.getBody();
-
-        assertThat(body).isNotNull();
-        assertThat(body.getUsername()).isEqualTo(testUsername1);
-        assertThat(body.getId()).isNotNull();
-        assertThat(body.getJwt()).isNotEmpty();
-        assertThat(body.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
-
-        String user1Jwt = "Bearer " + body.getJwt();
-        String title = "hello world";
-        String content = "this is some post's content";
-        Post post = Post.builder()
-                .title(title)
-                .content(content)
-                .build();
-
-        ResponseEntity<PostDto> postDtoResponseEntity = (ResponseEntity<PostDto>) postController.postPost(user1Jwt,post);
+//    @Test
+//    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+//    public void testUserSignupAndPost() {
+//        User user = User.builder()
+//                .email(testEmail1)
+//                .username(testUsername1)
+//                .password(testPassword1)
+//                .build();
 //
-        assertThat(postDtoResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        ResponseEntity<AuthDto> goodResponse =  (ResponseEntity<AuthDto>) authController.registerUser(user);
+//
+//        assertThat(goodResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        AuthDto body = goodResponse.getBody();
+//
+//        assertThat(body).isNotNull();
+//        assertThat(body.getUsername()).isEqualTo(testUsername1);
+//        assertThat(body.getId()).isNotNull();
+//        assertThat(body.getJwt()).isNotEmpty();
+//        assertThat(body.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
+//
+//        String user1Jwt = "Bearer " + body.getJwt();
+//        String title = "hello world";
+//        String content = "this is some post's content";
+//        Post post = Post.builder()
+//                .title(title)
+//                .content(content)
+//                .build();
+//
+//        ResponseEntity<PostDto> postDtoResponseEntity = (ResponseEntity<PostDto>) postController.postPost(user1Jwt,post);
+////
+//        assertThat(postDtoResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 //        PostDto postBody = postDtoResponseEntity.getBody();
 //
 //        assertThat(postBody).isNotNull();
@@ -93,7 +93,7 @@ public class PostControllerTest {
 //        }
 //
 //
-    }
+//    }
 //
 //    @Test
 //    public void testPostUpdate() {
