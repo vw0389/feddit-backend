@@ -32,7 +32,7 @@ public class JwtUtils {
         this.userRepository = userRepository;
         this.rsaKeys =  getRsaKeys();
         PublicKey publicKey = (PublicKey) rsaKeys.get("public");
-        this.parser = Jwts.parserBuilder().setSigningKey(publicKey).build();
+        this.parser = Jwts.parser().verifyWith(publicKey).build();
         logger.debug("jwtutils initialized");
     }
     public String generateJwtToken(Authentication authentication) {
@@ -40,31 +40,29 @@ public class JwtUtils {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
         PrivateKey privateKey = (PrivateKey) rsaKeys.get("private");
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(privateKey,SignatureAlgorithm.RS512)
+                .subject((userPrincipal.getUsername()))
+                .issuedAt(new Date())
+                .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(privateKey)
                 .compact();
     }
 
     public String getUserNameFromJwtToken(String token) {
 
-        return parser.parseClaimsJws(token)
-                .getBody()
+        return parser.parseSignedClaims(token).getPayload()
                 .getSubject();
     }
 
     public long getUserIdFromJwtToken(String token) {
 
         return userRepository.findByUsername(
-                parser.parseClaimsJws(token)
-                        .getBody()
+                parser.parseSignedClaims(token).getPayload()
                         .getSubject())
                 .orElseThrow(RuntimeException::new).getId();
     }
     public boolean validateJwtToken(String authToken) {
         try {
-            parser.parseClaimsJws(authToken);
+            parser.parseSignedClaims(authToken);
             return true;
         } catch (SecurityException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());
